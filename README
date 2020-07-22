@@ -1,0 +1,5 @@
+UHK Viewer
+
+Add some features missing on [agent for UHK](https://github.com/UltimateHackingKeyboard/agent):
+* Create new blank keymap
+* Copy a single layer from another layer (can be from a different keymap or the same)
