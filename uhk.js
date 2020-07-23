@@ -1,4 +1,4 @@
-var config;
+var jsondata;
 
 $( document ).ready(function() {
 	$("#upConfig").change(uploadFile);
@@ -7,9 +7,10 @@ $( document ).ready(function() {
 	$("#keymapName").on('input', function(){keymapNameCheck();});
 	$("#keymapAbbr").on('input', function(){keymapAbbrCheck();});
 	$("#keymapName").change(keymapNameChange);
-	
-	
+
+
 	function keymapNameCheck() {
+		// Check name while you write
 		name = $("#keymapName").val();
 		abbr = $("#keymapAbbr").val();
 		if (checkName(name)) {
@@ -20,8 +21,9 @@ $( document ).ready(function() {
 			$("#newKeymap").prop('disabled', true);
 		}
 	}
-	
+
 	function keymapAbbrCheck() {
+		// Check abbreviation while you write
 		name = $("#keymapName").val();
 		abbr = $("#keymapAbbr").val();
 		if (checkAbbr(abbr)) {
@@ -32,8 +34,9 @@ $( document ).ready(function() {
 			$("#newKeymap").prop('disabled', true);
 		}
 	}
-	
+
 	function keymapNameChange() {
+		// If abbreviation is empty, get it from the name (first 3 letters)
 		kname = $("#keymapName");
 		kabbr = $("#keymapAbbr");
 		count = 2;
@@ -46,76 +49,79 @@ $( document ).ready(function() {
 				}
 			}
 		}
-		keymapNameCheck();//$("#newKeymap").prop('disabled', (!checkName(kname.val()) && kname.val().length > 0 && kabbr.val().length > 0));
+		keymapNameCheck();
 	}
-	
+
 	function createKeymap() {
 		// Create a new blank keymap
-		let layer = [{modules: [{id: 0, keyactions: []}, {id: 1, keyactions: []}, {id: 2, keyactions: []}]}, {modules: [{id: 0, keyactions: []}, {id: 1, keyactions: []}]}, {modules: [{id: 0, keyactions: []}, {id: 1, keyactions: []}]}, {modules: [{id: 0, keyactions: []}, {id: 1, keyactions: []}]}];
+		let layer = [{modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}];
 		for (i=0; i<layer.length; i++)
 			for (j=0; j<2; j++)
 				for (k=0; k<35; k++)
-					layer[i].modules[j].keyactions.push(null);
+					layer[i].modules[j].keyActions.push(null);
 		let keymap = {isDefault: false, abbreviation: $("#keymapAbbr").val(), name: $("#keymapName").val(), description: $("#keymapDesc").val(), layers: layer};
 		let index = 0
 		let capsname = $("#keymapName").val().toUpperCase();
-		while (index < config.keymaps.length && config.keymaps[index].name.toUpperCase() < capsname) {
+		while (index < jsondata.keymaps.length && jsondata.keymaps[index].name.toUpperCase() < capsname) {
 			index++;
 		}
-		//for (i=0; i<config.keymaps.length; i++)
-		//	if (config.keymaps
 		console.log(index);
-		config.keymaps.splice(index, 0, keymap);
+		jsondata.keymaps.splice(index, 0, keymap);
+		getInfo();
+		$("#newKeymapInfo").show().delay(3000).hide(0);
+		$("#keymapName").val("");
+		$("#keymapAbbr").val("");
+		$("#keymapDesc").val("");
 	}
-	
+
 	function checkName(name) {
-		// Check if name is free and can be used
-		// Returns False if is already used
+		// Check if name is not used
+		// Returns True if available
 		name = name.toUpperCase();
-		for (i=0; i<config.keymaps.length; i++)
-			if (config.keymaps[i].name.toUpperCase() == name)
+		for (i=0; i<jsondata.keymaps.length; i++)
+			if (jsondata.keymaps[i].name.toUpperCase() == name)
 				return false;
 		return true;
 	}
-	
+
 	function checkAbbr(name) {
-		// Check if abbreviation is free and can be used
-		// Returns False if is already used
+		// Check if abbreviation is not used
+		// Returns True if available
 		name = name.toUpperCase();
-		for (i=0; i<config.keymaps.length; i++)
-			if (config.keymaps[i].abbreviation.toUpperCase() == name)
+		for (i=0; i<jsondata.keymaps.length; i++)
+			if (jsondata.keymaps[i].abbreviation.toUpperCase() == name)
 				return false;
 		return true;
 	}
-	
+
 	function downloadFile() {
-		let textToSave = JSON.stringify(config, null, 2);
-	
-		if(config !== undefined) {
+		if(jsondata !== undefined) {
+			let textToSave = JSON.stringify(jsondata, null, 2);
 			let hiddenElement = document.createElement('a');
-			hiddenElement.href = 'data:attachment/text,' + encodeURI(textToSave);
+			hiddenElement.href = 'data:attachment/text,' + encodeURIComponent(textToSave);
 			hiddenElement.target = '_blank';
 			hiddenElement.download = 'userConfiguration-MOD.json';
 			hiddenElement.click();
 		}
 	}
-	
+
 	function uploadFile(event) {
-		config = undefined;
+		jsondata = undefined;
 		$("#downConfig").prop('disabled', true);
 		const input = event.target;
 		if ('files' in input && input.files.length > 0) {
 			getFileConfig(input.files[0]);
 		}
 	}
-	
+
 	function getFileConfig(file) {
 		readFileContent(file).then(content => {
 			$("#downConfig").prop('disabled', false);
-			config = JSON.parse(content);
+			jsondata = JSON.parse(content);
+			getInfo("Keymap loaded.\r\r");
 		}).catch(error => console.log(error));
 	}
-	
+
 	function readFileContent(file) {
 		const reader = new FileReader()
 		return new Promise((resolve, reject) => {
@@ -123,5 +129,14 @@ $( document ).ready(function() {
 			reader.onerror = error => reject(error);
 			reader.readAsText(file);
 		})
+	}
+
+	function getInfo(extra) {
+		var summary = (extra === undefined) ? "" : extra;
+		summary += jsondata.keymaps.length + " keymaps:\r";
+		for (i=0; i<jsondata.keymaps.length; i++) {
+			summary += "\t- " + jsondata.keymaps[i].name + ((jsondata.keymaps[i].isDefault == true) ? "* \r" : "\r");
+		}
+		$("#infoarea").html(summary);
 	}
 });

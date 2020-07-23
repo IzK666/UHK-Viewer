@@ -1,8 +1,11 @@
-UHK Viewer
+# UHK Viewer
 
-Add some features missing on [agent for UHK](https://github.com/UltimateHackingKeyboard/agent):
-* Create new blank keymap
+Add some features missing on [agent for UHK](https://github.com/UltimateHackingKeyboard/agent)
+Works with JSON files (configuration backups)
+
+## Tools
+- Create new blank keymap
 
 
-To do:
-* Copy a single layer from another layer (can be from a different keymap or the same)
+## To do:
+- Copy layers
