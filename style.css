@@ -1,0 +1,110 @@
+#sideMenu {
+	height:					100%;
+	width:					250px;
+	position:				fixed;            
+	overflow-y:				auto;
+}
+
+.sidenav a {
+	padding:				5px;
+	text-decoration:		none;
+	font-size:				16px;
+	display:				block;
+	background-color:		#eee;
+	text-decoration:		none;
+	color:					#555;
+	margin:					0 20px 0 10px;
+}
+
+.sidenav a:hover {
+	background-color:		#ccc;
+	color:					black;
+}
+
+.sidenav a.sidetitle {
+	background-color:		#660;
+	color:					white;
+	padding:				12px;
+	border-top-left-radius:	15px;
+}
+
+.sidenav a.sidetitle:not(:first-child) {
+	margin-top:				50px;
+}
+
+.sidenav a.sideselected{
+	background-color:		#888;
+	color:					white;
+}
+
+.element {
+	position:				absolute;
+	top:					0px;
+	left:					0px;
+	margin-left:			250px;
+	padding:				30px 50px;
+	height:					100%;
+	width:					75%;
+}
+
+.error {
+	position:				relative;
+	text-align:				center;
+	margin:					auto;
+	top:					25%;
+	width:					50%;
+	font-size:				2em;
+	border:					5px solid red;
+	background:				white;
+}
+
+.hide {
+	display:				none;
+}
+
+.red {
+	color:					red;
+}
+
+.green {
+	color:					green;
+}
+
+input[type="button"] {
+	font-size:				14px;
+	padding:				10px 50px;
+	border-radius:			5px;
+}
+
+input[type="file"] {
+	font-size:				14px;
+}
+
+input[type="text"] {
+	height:					2em;
+	font-size:				14px;
+}
+
+#tCreate {
+	width:					50%;
+	font-size:				16px;
+}
+
+#tCreate td {
+	padding:				10px 0px;
+}
+
+::-webkit-scrollbar {
+	width:					0.6em;
+}
+::-webkit-scrollbar-button {
+	background:				#ccc;
+}
+
+::-webkit-scrollbar-track-piece {
+	background:				#eee;
+}
+
+::-webkit-scrollbar-thumb {
+	background:				#b88;
+}

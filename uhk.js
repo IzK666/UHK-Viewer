@@ -7,7 +7,30 @@ $( document ).ready(function() {
 	$("#keymapName").on('input', function(){keymapNameCheck();});
 	$("#keymapAbbr").on('input', function(){keymapAbbrCheck();});
 	$("#keymapName").change(keymapNameChange);
+	$("a").click(menuselect);
+	
 
+
+	function menuselect() {
+		if ($(this).hasClass("sidetitle"))
+			return;
+		view = $(this).attr("data-menu");
+		if (jsondata === undefined && view != "divConfig" && view != "divAbout") {
+			$("#divError").show().delay(2000).fadeOut(500);
+		} else {
+			$(".element").addClass("hide");
+			$('.sideselected').removeClass('sideselected');
+			$(this).addClass('sideselected');
+			if (view != "keymap" && view != "macro")
+				$("#" + view).removeClass("hide");
+		}
+	}
+
+	/****************************/
+
+	/****************************/
+	/*	CREATE NEW BLANK KEYMAP	*/
+	/****************************/
 
 	function keymapNameCheck() {
 		// Check name while you write
@@ -67,7 +90,8 @@ $( document ).ready(function() {
 		}
 		console.log(index);
 		jsondata.keymaps.splice(index, 0, keymap);
-		getInfo();
+		updateKeymaps();
+		updateMacros();
 		$("#newKeymapInfo").show().delay(3000).hide(0);
 		$("#keymapName").val("");
 		$("#keymapAbbr").val("");
@@ -94,13 +118,19 @@ $( document ).ready(function() {
 		return true;
 	}
 
+	/****************************/
+
+
+	/****************************/
+	/*	IMPORT/EXPORT JSON		*/
+	/****************************/
 	function downloadFile() {
 		if(jsondata !== undefined) {
 			let textToSave = JSON.stringify(jsondata, null, 2);
 			let hiddenElement = document.createElement('a');
 			hiddenElement.href = 'data:attachment/text,' + encodeURIComponent(textToSave);
 			hiddenElement.target = '_blank';
-			hiddenElement.download = 'userConfiguration-MOD.json';
+			hiddenElement.download = 'userConfiguration-mod.json';
 			hiddenElement.click();
 		}
 	}
@@ -118,7 +148,8 @@ $( document ).ready(function() {
 		readFileContent(file).then(content => {
 			$("#downConfig").prop('disabled', false);
 			jsondata = JSON.parse(content);
-			getInfo("Keymap loaded.\r\r");
+			updateKeymaps();
+			updateMacros();
 		}).catch(error => console.log(error));
 	}
 
@@ -131,12 +162,27 @@ $( document ).ready(function() {
 		})
 	}
 
-	function getInfo(extra) {
-		var summary = (extra === undefined) ? "" : extra;
-		summary += jsondata.keymaps.length + " keymaps:\r";
+	function updateKeymaps() {
+		$("a").off();
+		while ($('#mk').next().attr('id') != "mm")
+			$('#mk').next().remove();
+		items = "";
 		for (i=0; i<jsondata.keymaps.length; i++) {
-			summary += "\t- " + jsondata.keymaps[i].name + ((jsondata.keymaps[i].isDefault == true) ? "* \r" : "\r");
+			items += "<a href=\"#\" data-menu=\"divKeymap\" data-index=" + i + "\">" + jsondata.keymaps[i].name + ((jsondata.keymaps[i].isDefault == true) ? " * " : "") + "</a>";
 		}
-		$("#infoarea").html(summary);
+		$('#mk').after(items);
+		$("a").click(menuselect);
+	}
+
+	function updateMacros() {
+		$("a").off();
+		while ($('#mm').next().attr('href') !== undefined)
+			$('#mm').next().remove();
+		items = "";
+		for (i=0; i<jsondata.macros.length; i++) {
+			items += "<a href=\"#\" data-menu=\"divMacro\" data-index=" + i + "\">" + jsondata.macros[i].name + "</a>";
+		}
+		$('#mm').after(items);
+		$("a").click(menuselect);
 	}
 });
