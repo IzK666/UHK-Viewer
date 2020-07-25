@@ -16,6 +16,7 @@ $( document ).ready(function() {
 	$("#sSideF").change(function(){$("#sSideT").val($("#sSideF").val());copyChange();}); // We need to match sides (Left-left, right-right, both-both
 	$("#sSideT").change(function(){$("#sSideF").val($("#sSideT").val());copyChange();});
 	$("#btnCopy").click(copyLayer);
+	$("#btnClear").click(clearLayer);
 
 
 
@@ -184,17 +185,31 @@ $( document ).ready(function() {
 						jsondata.keymaps[$('#sKeymapT').val()].layers[i].modules[1] = jsondata.keymaps[$('#sKeymapF').val()].layers[i].modules[1];
 				}
 			} else {
-				if ($('#sSideF').val() != "1") {
+				if ($('#sSideF').val() != "1")
 					jsondata.keymaps[$('#sKeymapT').val()].layers[$('#sLayerT').val()].modules[0] = jsondata.keymaps[$('#sKeymapF').val()].layers[$('#sLayerF').val()].modules[0];
-					console.log("jsondata.keymaps["+$('#sKeymapT').val()+"].layers["+$('#sLayerT').val()+"].modules[0] = jsondata.keymaps["+$('#sKeymapF').val()+"].layers["+$('#sLayerF').val()+"].modules[0]");
-				}
-				if ($('#sSideF').val() != "0") {
+				if ($('#sSideF').val() != "0")
 					jsondata.keymaps[$('#sKeymapT').val()].layers[$('#sLayerT').val()].modules[1] = jsondata.keymaps[$('#sKeymapF').val()].layers[$('#sLayerF').val()].modules[1];
-					console.log("jsondata.keymaps["+$('#sKeymapT').val()+"].layers["+$('#sLayerT').val()+"].modules[1]  = jsondata.keymaps[" + $('#sKeymapF').val() +"].layers["+$('#sLayerF').val()+"].modules[1]");
-				}
 			}
 			$("#btnCopyInfo").show().delay(3000).hide(0);
 		}
+	}
+
+	/************************************/
+
+
+
+	/************************************/
+	/*	Clear layers					*/
+	/************************************/
+
+	function clearLayer() {
+		for (i=0; i<36; i++) {
+			if ($('#sSideC').val() != "1")
+				jsondata.keymaps[$('#sKeymapC').val()].layers[$('#sLayerC').val()].modules[0].keyActions[i] = null;
+			if ($('#sSideC').val() != "0")
+				jsondata.keymaps[$('#sKeymapC').val()].layers[$('#sLayerC').val()].modules[1].keyActions[i] = null;
+		}
+		$("#btnClearInfo").show().delay(3000).hide(0);
 	}
 
 	/************************************/
@@ -251,6 +266,7 @@ $( document ).ready(function() {
 	/*	Keymaps and Macros				*/
 	/************************************/
 
+	/* Load keymaps on side menu and select dropdowns. */
 	function loadKeymaps() {
 		$("a").off();
 		while ($('#mk').next().attr('id') != "mm")
@@ -258,6 +274,7 @@ $( document ).ready(function() {
 		for (i=0; i<$('#sKeymapF').children().length; i++) {
 			$('#sKeymapF').children().remove();
 			$('#sKeymapT').children().remove();
+			$('#sKeymapC').children().remove();
 		}
 		for (i=0; i<$('#keymapSource').children().length; i++) {
 			$('#keymapSource').children().remove();
@@ -268,6 +285,7 @@ $( document ).ready(function() {
 			items += "<a href=\"#\" data-menu=\"divKeymap\" data-index=\"" + i + "\">" + jsondata.keymaps[i].name + ((jsondata.keymaps[i].isDefault == true) ? " * " : "") + "</a>";
 			$("#sKeymapT").append('<option value="' + i + '">' + jsondata.keymaps[i].name + '</option>');
 			$("#sKeymapF").append('<option value="' + i + '">' + jsondata.keymaps[i].name + '</option>');
+			$("#sKeymapC").append('<option value="' + i + '">' + jsondata.keymaps[i].name + '</option>');
 			$("#keymapSource").append('<option value="' + i + '">' + jsondata.keymaps[i].name + '</option>');
 		}
 		$('#mk').after(items);

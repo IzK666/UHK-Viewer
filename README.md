@@ -7,8 +7,8 @@ You can try it online [here](https://izk666.github.io/UHK-Viewer/).
 ## Tools
 
 - Create new blank keymap
-
+- Copy layers
+- Clear layers
 
 ## To do:
-
-- Copy layers
+- View keymaps

@@ -11,8 +11,9 @@
 			<a class="sidetitle">Tools</a>
 			<a href="#" data-menu="divConfig" class="sideselected">Configuration</a>
 			<a href="#" data-menu="divCreate">Create keymap</a>
+			<a href="#" data-menu="divClear">Clear layers</a>
 			<a href="#" data-menu="divCopy">Copy layers</a>
-			<a href="#" data-menu="divAbout">About</a>
+			<!--a href="#" data-menu="divAbout">About</a-->
 			<a class="sidetitle" id="mk">Keymaps</a>
 			<a class="sidetitle" id="mm">Macros</a>
 		</div>
@@ -83,6 +84,31 @@
 			</table>
 		</div>
 
+		<div id="divClear" class="hide element">
+			<h1>Clear layer:</h1>
+			<select id="sKeymapC"></select>
+			<select id="sLayerC">
+				<option value="0" selected="selected">Base</option>
+				<option value="1">Mod</option>
+				<option value="2">Fn</option>
+				<option value="3">Mouse</option>
+			</select>
+			<select id="sSideC">
+				<option value="both">Both sides</option>
+				<option value="1">Left side</option>
+				<option value="0">Right side</option>
+			</select>
+			<br><br><br>
+			<br><br><br>
+			<input type="button" id="btnClear" value="Clear">
+			<br>
+			<span id="btnClearInfo" class="hide info">Layer cleared succesfully</span>
+		</div>
+
+		<div id="divError" class="error hide">
+			<p id="txtError"></p>
+		</div>
+
 		<div id="divCopy" class="hide element">
 			<h1>Copy from:</h1>
 			<select id="sKeymapF"></select>
@@ -99,7 +125,7 @@
 				<option value="0">Right side</option>
 			</select>
 			<br><br><br>
-			<h1>Paste in:</h1>
+			<h1>Paste to:</h1>
 			<select id="sKeymapT"></select>
 			<select id="sLayerT">
 				<option value="all">All</option>
@@ -130,7 +156,7 @@
 		<div id="divKeymap" class="hide element">
 			<h1>Keymap</h1>
 			<p>A keymap</p>
-			<!--table>
+			<table>
 				<tr>
 					<td id="NL1" style="width:50px; height:25px;border:1px red solid;" />
 					<td id="NL2" style="width:50px; border:1px red solid;" />
@@ -167,7 +193,7 @@
 					<td id="MoL6" style="width:50px; height:25px;border:1px red solid;" />
 					<td id="MoL7" style="width:50px; height:25px;border:1px red solid;" />
 				</tr>
-			</table-->
+			</table>
 		</div>
 
  		<div id="divMacro" class="hide element">
