@@ -40,22 +40,20 @@
 .element {
 	position:				absolute;
 	top:					0px;
-	left:					0px;
-	margin-left:			250px;
+	left:					250px;
+	right:					10px;
 	padding:				30px 50px;
-	height:					100%;
-	width:					75%;
 }
 
 .error {
 	position:				relative;
 	text-align:				center;
 	margin:					auto;
-	top:					25%;
+	top:					20%;
 	width:					50%;
 	font-size:				2em;
 	border:					5px solid red;
-	background:				white;
+	background:				#EEE;
 }
 
 .hide {
@@ -66,8 +64,12 @@
 	color:					red;
 }
 
-.green {
-	color:					green;
+.info {
+	color:					#0A0;
+	background:				yellow;
+	font-size:				18px;
+	padding:				0 10px;
+	border-radius:			5px;
 }
 
 input[type="button"] {
@@ -85,6 +87,24 @@ input[type="text"] {
 	font-size:				14px;
 }
 
+select {
+	padding:				5px 30px;
+	font-size:				16px;
+}
+
+#keymapSource option:nth-child(1) {
+    font-weight:			bold;
+    color:					blue;
+    font-size:				18px;
+    text-align:				center;
+    padding:				30px;
+}
+
+#chkCopy, #lblCopy {
+	font-size:				14px;
+	padding:				10px;
+}
+
 #tCreate {
 	width:					50%;
 	font-size:				16px;
@@ -97,6 +117,7 @@ input[type="text"] {
 ::-webkit-scrollbar {
 	width:					0.6em;
 }
+
 ::-webkit-scrollbar-button {
 	background:				#ccc;
 }

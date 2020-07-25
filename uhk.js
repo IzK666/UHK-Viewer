@@ -2,35 +2,53 @@ var jsondata;
 
 $( document ).ready(function() {
 	$("#upConfig").change(uploadFile);
-	$("#downConfig").click(downloadFile);
+	$("#btnDownload").click(downloadFile);
 	$("#newKeymap").click(createKeymap);
 	$("#keymapName").on('input', function(){keymapNameCheck();});
 	$("#keymapAbbr").on('input', function(){keymapAbbrCheck();});
 	$("#keymapName").change(keymapNameChange);
 	$("a").click(menuselect);
-	
+	$("#sKeymapF").change(copyChange);
+	$("#sKeymapT").change(copyChange);
+	$("#sLayerF").change(function(){if ($("#sLayerF").val()=="all"){$("#sLayerT").val("all")}else if ($("#sLayerT").val()=="all"){$("#sLayerT").val("0")};copyChange();}); // If layer is All, destiny should be all
+	$("#sLayerT").change(function(){if ($("#sLayerT").val()=="all"){$("#sLayerF").val("all")}else if ($("#sLayerF").val()=="all"){$("#sLayerF").val("0")};copyChange();});
+	$("#chkCopy").change(copyChange);
+	$("#sSideF").change(function(){$("#sSideT").val($("#sSideF").val());copyChange();}); // We need to match sides (Left-left, right-right, both-both
+	$("#sSideT").change(function(){$("#sSideF").val($("#sSideT").val());copyChange();});
+	$("#btnCopy").click(copyLayer);
 
+
+
+	function showError(text) {
+		$("#txtError").html(text);
+		$("#divError").show().delay(2000).fadeOut(500);
+	}
 
 	function menuselect() {
 		if ($(this).hasClass("sidetitle"))
 			return;
 		view = $(this).attr("data-menu");
 		if (jsondata === undefined && view != "divConfig" && view != "divAbout") {
-			$("#divError").show().delay(2000).fadeOut(500);
+			showError("This function is unavailable<br>Load a configuration file")
 		} else {
 			$(".element").addClass("hide");
 			$('.sideselected').removeClass('sideselected');
 			$(this).addClass('sideselected');
-			if (view != "keymap" && view != "macro")
-				$("#" + view).removeClass("hide");
+			$("#" + view).removeClass("hide");
+			//if (view != "keymap" && view != "macro")
+			if (view == "divKeymap") {
+				viewKeymap(view = $(this).attr("data-index"));
+			}
 		}
 	}
 
-	/****************************/
+	/************************************/
 
-	/****************************/
-	/*	CREATE NEW BLANK KEYMAP	*/
-	/****************************/
+
+
+	/************************************/
+	/*	CREATE NEW BLANK KEYMAP			*/
+	/************************************/
 
 	function keymapNameCheck() {
 		// Check name while you write
@@ -90,8 +108,16 @@ $( document ).ready(function() {
 		}
 		console.log(index);
 		jsondata.keymaps.splice(index, 0, keymap);
-		updateKeymaps();
-		updateMacros();
+		let source = $("#keymapSource").val();
+		if (source != "blank") {
+			if (source >= index)
+				source++;
+			for (i=0; i<4; i++)
+				for (j=0; j<2; j++)
+					jsondata.keymaps[index].layers[i].modules[j] = jsondata.keymaps[source].layers[i].modules[j];
+		}
+		loadKeymaps();
+		loadMacros();
 		$("#newKeymapInfo").show().delay(3000).hide(0);
 		$("#keymapName").val("");
 		$("#keymapAbbr").val("");
@@ -118,12 +144,67 @@ $( document ).ready(function() {
 		return true;
 	}
 
-	/****************************/
+
+	/************************************/
 
 
-	/****************************/
-	/*	IMPORT/EXPORT JSON		*/
-	/****************************/
+
+	/************************************/
+	/*	Copy layers						*/
+	/************************************/
+
+	function checkCopyOptions() {
+		// Check Layer. All-All or Other-Other
+		if (!((($('#sLayerF').val() == "all") && ($('#sLayerT').val() == "all")) || (($('#sLayerF').val() != "all") && ($('#sLayerT').val() != "all"))))
+			return false;
+
+		// Check sides
+		if ($('#sSideF').val() != $('#sSideT').val())
+			return false;
+
+		if ($('#chkCopy').is(':checked') && $('#sLayerF').val() != "all")
+				return (!($('#sLayerF').val() == $('#sLayerT').val() && $('#sKeymapF').val() == $('#sKeymapT').val()));
+		else
+			return ($('#sKeymapF').val() != $('#sKeymapT').val());
+	}
+
+	function copyChange() {
+		$('#btnCopy').attr("disabled", !checkCopyOptions());
+	}
+
+	function copyLayer() {
+		if (checkCopyOptions()) {
+			side1 = ($('#sSideF').val() == "both") ? 0 : $('#sSideF').val();
+			side2 = ($('#sSideF').val() == "both") ? 1 : $('#sSideF').val();
+			if ($('#sLayerT').val() == "all") {
+				for (i=0; i< 4; i++) {
+					if ($('#sSideF').val() != "1")
+						jsondata.keymaps[$('#sKeymapT').val()].layers[i].modules[0] = jsondata.keymaps[$('#sKeymapF').val()].layers[i].modules[0];
+					if ($('#sSideF').val() != "0")
+						jsondata.keymaps[$('#sKeymapT').val()].layers[i].modules[1] = jsondata.keymaps[$('#sKeymapF').val()].layers[i].modules[1];
+				}
+			} else {
+				if ($('#sSideF').val() != "1") {
+					jsondata.keymaps[$('#sKeymapT').val()].layers[$('#sLayerT').val()].modules[0] = jsondata.keymaps[$('#sKeymapF').val()].layers[$('#sLayerF').val()].modules[0];
+					console.log("jsondata.keymaps["+$('#sKeymapT').val()+"].layers["+$('#sLayerT').val()+"].modules[0] = jsondata.keymaps["+$('#sKeymapF').val()+"].layers["+$('#sLayerF').val()+"].modules[0]");
+				}
+				if ($('#sSideF').val() != "0") {
+					jsondata.keymaps[$('#sKeymapT').val()].layers[$('#sLayerT').val()].modules[1] = jsondata.keymaps[$('#sKeymapF').val()].layers[$('#sLayerF').val()].modules[1];
+					console.log("jsondata.keymaps["+$('#sKeymapT').val()+"].layers["+$('#sLayerT').val()+"].modules[1]  = jsondata.keymaps[" + $('#sKeymapF').val() +"].layers["+$('#sLayerF').val()+"].modules[1]");
+				}
+			}
+			$("#btnCopyInfo").show().delay(3000).hide(0);
+		}
+	}
+
+	/************************************/
+
+
+
+	/************************************/
+	/*	IMPORT/EXPORT JSON				*/
+	/************************************/
+
 	function downloadFile() {
 		if(jsondata !== undefined) {
 			let textToSave = JSON.stringify(jsondata, null, 2);
@@ -137,7 +218,7 @@ $( document ).ready(function() {
 
 	function uploadFile(event) {
 		jsondata = undefined;
-		$("#downConfig").prop('disabled', true);
+		$("#btnDownload").prop('disabled', true);
 		const input = event.target;
 		if ('files' in input && input.files.length > 0) {
 			getFileConfig(input.files[0]);
@@ -146,10 +227,10 @@ $( document ).ready(function() {
 
 	function getFileConfig(file) {
 		readFileContent(file).then(content => {
-			$("#downConfig").prop('disabled', false);
+			$("#btnDownload").prop('disabled', false);
 			jsondata = JSON.parse(content);
-			updateKeymaps();
-			updateMacros();
+			loadKeymaps();
+			loadMacros();
 		}).catch(error => console.log(error));
 	}
 
@@ -162,19 +243,38 @@ $( document ).ready(function() {
 		})
 	}
 
-	function updateKeymaps() {
+	/************************************/
+
+
+
+	/************************************/
+	/*	Keymaps and Macros				*/
+	/************************************/
+
+	function loadKeymaps() {
 		$("a").off();
 		while ($('#mk').next().attr('id') != "mm")
 			$('#mk').next().remove();
+		for (i=0; i<$('#sKeymapF').children().length; i++) {
+			$('#sKeymapF').children().remove();
+			$('#sKeymapT').children().remove();
+		}
+		for (i=0; i<$('#keymapSource').children().length; i++) {
+			$('#keymapSource').children().remove();
+		}
+		$("#keymapSource").append('<option value="blank"><< Blank keymap >></option>');
 		items = "";
 		for (i=0; i<jsondata.keymaps.length; i++) {
-			items += "<a href=\"#\" data-menu=\"divKeymap\" data-index=" + i + "\">" + jsondata.keymaps[i].name + ((jsondata.keymaps[i].isDefault == true) ? " * " : "") + "</a>";
+			items += "<a href=\"#\" data-menu=\"divKeymap\" data-index=\"" + i + "\">" + jsondata.keymaps[i].name + ((jsondata.keymaps[i].isDefault == true) ? " * " : "") + "</a>";
+			$("#sKeymapT").append('<option value="' + i + '">' + jsondata.keymaps[i].name + '</option>');
+			$("#sKeymapF").append('<option value="' + i + '">' + jsondata.keymaps[i].name + '</option>');
+			$("#keymapSource").append('<option value="' + i + '">' + jsondata.keymaps[i].name + '</option>');
 		}
 		$('#mk').after(items);
 		$("a").click(menuselect);
 	}
 
-	function updateMacros() {
+	function loadMacros() {
 		$("a").off();
 		while ($('#mm').next().attr('href') !== undefined)
 			$('#mm').next().remove();
@@ -184,5 +284,36 @@ $( document ).ready(function() {
 		}
 		$('#mm').after(items);
 		$("a").click(menuselect);
+	}
+
+	function viewKeymap(keymap) {
+		for (i=0; i<8; i++) {
+			$('#NL'+i).text("");
+			$('#ML'+i).text("");
+			$('#FL'+i).text("");
+			$('#MoL'+i).text("");
+		}
+		for (i=0; i<8; i++) {
+			if (jsondata.keymaps[keymap].layers[0].modules[1].keyActions[i] !== null)
+				if (jsondata.keymaps[keymap].layers[0].modules[1].keyActions[i].scancode)
+					$('#NL'+i).text(jsondata.keymaps[keymap].layers[0].modules[1].keyActions[i].scancode);
+				else
+					$('#NL'+i).text("?");
+			if (jsondata.keymaps[keymap].layers[1].modules[1].keyActions[i] !== null)
+				if (jsondata.keymaps[keymap].layers[1].modules[1].keyActions[i].scancode)
+					$('#ML'+i).text(jsondata.keymaps[keymap].layers[1].modules[1].keyActions[i].scancode);
+				else
+					$('#ML'+i).text("?");
+			if (jsondata.keymaps[keymap].layers[2].modules[1].keyActions[i] !== null)
+				if (jsondata.keymaps[keymap].layers[2].modules[1].keyActions[i].scancode)
+					$('#FL'+i).text(jsondata.keymaps[keymap].layers[2].modules[1].keyActions[i].scancode);
+				else
+					$('#FL'+i).text("?");
+			if (jsondata.keymaps[keymap].layers[3].modules[1].keyActions[i] !== null)
+				if (jsondata.keymaps[keymap].layers[3].modules[1].keyActions[i].scancode)
+					$('#MoL'+i).text(jsondata.keymaps[keymap].layers[3].modules[1].keyActions[i].scancode);
+				else
+					$('#MoL'+i).text("?");
+		}
 	}
 });
