@@ -130,29 +130,96 @@ select {
 	background:				#b88;
 }
 
+
+.container {
+	max-width:				850px;
+	width:					100%;
+	margin:					0 auto;
+}
+
+.radio {
+	float:					left;
+	width:					15%;
+}
+
+.radio:first-of-type {
+	border-top-left-radius:	12px;
+	border-bottom-left-radius:	12px;
+}
+
+.radio:last-of-type {
+	border-top-right-radius:	12px;
+	border-bottom-right-radius:	12px;
+}
+
+.cf:before,
+.cf:after {
+    content:				" ";
+    display:				table;
+}
+
+.cf:after {
+    clear:					both;
+}
+
+.form {
+	width:					980px;
+	margin:					0 auto;
+}
+
+.layer {
+	width:					100%; 
+}
+
+.form .layer input {
+	display:				none;
+}
+
+.form label {
+	position: relative;
+	color:					#333;
+	background-color:		#fff;
+	font-size:				16px;
+	text-align:				center;
+	height:					40px;
+	line-height:			38px;
+	display:				block;
+	cursor:					pointer;
+	border:					1px solid #666;
+	-webkit-box-sizing:		border-box;
+	-moz-box-sizing:		border-box;
+	box-sizing:				border-box;
+}
+
+.form .layer input:checked + label {
+	border:					1px solid #333;
+	background-color:		#47f;
+	color:					#fff;
+}
+
 .keyboard {
 	display: grid;
 	
-	max-width: 1085px;
-	padding: 20px;
-	position: absolute;
-	margin: auto;
-	background-color: #333;
-	border-radius: 10px;
-	grid-template-columns: repeat(63, 12px);
-	grid-template-rows: repeat(5, 60px);
-	grid-gap: 5px;
+	max-width:				1066px;
+	padding:				20px;
+	position:				absolute;
+	margin:					auto;
+	background-color:		#333;
+	border-radius:			10px;
+	grid-template-columns:	repeat(63, 10px);
+	grid-template-rows:		repeat(5, 50px);
+	grid-gap:				5px;
 }
 
 .key {
-    background-color: #333;
-    color: #FFF;
-    border: 2px solid grey;
-    border-radius: 5px;
-    grid-column: span 4;
-    font-size: 20px;
-    text-align: center;
-    padding-top: 17px;
+    background-color:		#333;
+    color:					#FFF;
+    border:					2px solid grey;
+    border-radius:			5px;
+    grid-column:			span 4;
+    font-size:				15px;
+    text-align:				center;
+    padding-top:			17px;
 }
 
 .key5, .nokey {
@@ -165,10 +232,6 @@ select {
 
 .key7 {
     grid-column: span 7;
-}
-
-.key8 {
-    grid-column: span 8;
 }
 
 .key9 {

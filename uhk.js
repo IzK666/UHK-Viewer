@@ -308,7 +308,7 @@ $( document ).ready(function() {
 	}
 
 	function changeKeymap(keymap) {
-		//$('#keymapName').text("Keymap" + jsondata.keymaps[keymap].name + " (" + jsondata.keymaps[keymap].abbreviation + ")");
+		$('#keymapTitle').text(jsondata.keymaps[keymap].name + " (" + jsondata.keymaps[keymap].abbreviation + ")");
 		viewKeymap(keymap, 0);
 	}
 
