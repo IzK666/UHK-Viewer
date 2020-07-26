@@ -129,3 +129,48 @@ select {
 ::-webkit-scrollbar-thumb {
 	background:				#b88;
 }
+
+.keyboard {
+	display: grid;
+	
+	max-width: 1085px;
+	padding: 20px;
+	position: absolute;
+	margin: auto;
+	background-color: #333;
+	border-radius: 10px;
+	grid-template-columns: repeat(63, 12px);
+	grid-template-rows: repeat(5, 60px);
+	grid-gap: 5px;
+}
+
+.key {
+    background-color: #333;
+    color: #FFF;
+    border: 2px solid grey;
+    border-radius: 5px;
+    grid-column: span 4;
+    font-size: 20px;
+    text-align: center;
+    padding-top: 17px;
+}
+
+.key5, .nokey {
+    grid-column: span 5;
+}
+
+.key6 {
+    grid-column: span 6;
+}
+
+.key7 {
+    grid-column: span 7;
+}
+
+.key8 {
+    grid-column: span 8;
+}
+
+.key9 {
+    grid-column: span 9;
+}

@@ -1,5 +1,6 @@
 var jsondata;
 
+
 $( document ).ready(function() {
 	$("#upConfig").change(uploadFile);
 	$("#btnDownload").click(downloadFile);
@@ -17,6 +18,7 @@ $( document ).ready(function() {
 	$("#sSideT").change(function(){$("#sSideF").val($("#sSideT").val());copyChange();});
 	$("#btnCopy").click(copyLayer);
 	$("#btnClear").click(clearLayer);
+	$("input[type='radio'").change(changeLayer);
 
 
 
@@ -38,7 +40,8 @@ $( document ).ready(function() {
 			$("#" + view).removeClass("hide");
 			//if (view != "keymap" && view != "macro")
 			if (view == "divKeymap") {
-				viewKeymap(view = $(this).attr("data-index"));
+				$('#layer0').prop('checked', true);
+				changeKeymap(view = $(this).attr("data-index"));
 			}
 		}
 	}
@@ -304,34 +307,55 @@ $( document ).ready(function() {
 		$("a").click(menuselect);
 	}
 
-	function viewKeymap(keymap) {
-		for (i=0; i<8; i++) {
-			$('#NL'+i).text("");
-			$('#ML'+i).text("");
-			$('#FL'+i).text("");
-			$('#MoL'+i).text("");
+	function changeKeymap(keymap) {
+		//$('#keymapName').text("Keymap" + jsondata.keymaps[keymap].name + " (" + jsondata.keymaps[keymap].abbreviation + ")");
+		viewKeymap(keymap, 0);
+	}
+
+	function changeLayer() {
+		viewKeymap($(".sideselected").attr("data-index"), $(this).val());
+	}
+
+	function viewKeymap(keymap, layer) {
+		
+		for (i=0; i<35; i++) {
+			$('#lKey'+i).text("");
+			$('#rKey'+i).text("");
 		}
-		for (i=0; i<8; i++) {
-			if (jsondata.keymaps[keymap].layers[0].modules[1].keyActions[i] !== null)
-				if (jsondata.keymaps[keymap].layers[0].modules[1].keyActions[i].scancode)
-					$('#NL'+i).text(jsondata.keymaps[keymap].layers[0].modules[1].keyActions[i].scancode);
+		for (i=0; i<35; i++) {
+			key = jsondata.keymaps[keymap].layers[layer].modules[0].keyActions[i];
+			if (key !== null)
+				if (key.scancode)
+					$('#rKey'+i).text(scancode[key.scancode]);
+				else if (key.modifierMask)
+					$('#rKey'+i).text(modifier[key.modifierMask]);
+				else if (key.layer)
+					$('#rKey'+i).text(key.layer);
+				else if (key.keymapAbbreviation)
+					$('#rKey'+i).text(key.keymapAbbreviation);
+				else if (key.keyActionType == "mouse")
+					$('#rKey'+i).text(key.mouseAction);
+				else if (key.keyActionType == "playMacro")
+					$('#rKey'+i).text(jsondata.macros[key.macroIndex].name);
 				else
-					$('#NL'+i).text("?");
-			if (jsondata.keymaps[keymap].layers[1].modules[1].keyActions[i] !== null)
-				if (jsondata.keymaps[keymap].layers[1].modules[1].keyActions[i].scancode)
-					$('#ML'+i).text(jsondata.keymaps[keymap].layers[1].modules[1].keyActions[i].scancode);
+					$('#rKey'+i).text("?");
+
+			key = jsondata.keymaps[keymap].layers[layer].modules[1].keyActions[i];
+			if (key !== null)
+				if (key.scancode)
+					$('#lKey'+i).text(scancode[key.scancode]);
+				else if (key.modifierMask)
+					$('#lKey'+i).text(modifier[key.modifierMask]);
+				else if (key.layer)
+					$('#lKey'+i).text(key.layer);
+				else if (key.keymapAbbreviation)
+					$('#lKey'+i).text(key.keymapAbbreviation);
+				else if (key.mouseAction)
+					$('#lKey'+i).text(key.mouseAction);
+				else if (key.keyActionType == "playMacro")
+					$('#lKey'+i).text(jsondata.macros[key.macroIndex].name);
 				else
-					$('#ML'+i).text("?");
-			if (jsondata.keymaps[keymap].layers[2].modules[1].keyActions[i] !== null)
-				if (jsondata.keymaps[keymap].layers[2].modules[1].keyActions[i].scancode)
-					$('#FL'+i).text(jsondata.keymaps[keymap].layers[2].modules[1].keyActions[i].scancode);
-				else
-					$('#FL'+i).text("?");
-			if (jsondata.keymaps[keymap].layers[3].modules[1].keyActions[i] !== null)
-				if (jsondata.keymaps[keymap].layers[3].modules[1].keyActions[i].scancode)
-					$('#MoL'+i).text(jsondata.keymaps[keymap].layers[3].modules[1].keyActions[i].scancode);
-				else
-					$('#MoL'+i).text("?");
+					$('#lKey'+i).text("?");
 		}
 	}
 });

@@ -1,10 +1,11 @@
 <html>
 	<head>
 		<script src="jquery-3.5.1.min.js"></script>
+		<script src="const.js"></script>
 		<script src="uhk.js"></script>
 		<link rel="stylesheet" type="text/css" href="style.css">
 		<link rel="icon" type="image/x-icon" href="favicon.ico">
-		<title>UHK Blank</title>
+		<title>UHK Viewer</title>
 	</head>
 	<body>
 		<div id="sideMenu" class="sidenav">
@@ -154,46 +155,90 @@
 		</div>
 
 		<div id="divKeymap" class="hide element">
-			<h1>Keymap</h1>
-			<p>A keymap</p>
-			<table>
-				<tr>
-					<td id="NL1" style="width:50px; height:25px;border:1px red solid;" />
-					<td id="NL2" style="width:50px; border:1px red solid;" />
-					<td id="NL3" style="width:50px; border:1px red solid;" />
-					<td id="NL4" style="width:50px; border:1px red solid;" />
-					<td id="NL5" style="width:50px; border:1px red solid;" />
-					<td id="NL6" style="width:50px; border:1px red solid;" />
-					<td id="NL7" style="width:50px; border:1px red solid;" />
-				</tr>
-				<tr>
-					<td id="ML1" style="width:50px; height:25px;border:1px red solid;" />
-					<td id="ML2" style="width:50px; height:25px;border:1px red solid;" />
-					<td id="ML3" style="width:50px; height:25px;border:1px red solid;" />
-					<td id="ML4" style="width:50px; height:25px;border:1px red solid;" />
-					<td id="ML5" style="width:50px; height:25px;border:1px red solid;" />
-					<td id="ML6" style="width:50px; height:25px;border:1px red solid;" />
-					<td id="ML7" style="width:50px; height:25px;border:1px red solid;" />
-				</tr>
-				<tr>
-					<td id="FL1" style="width:50px; height:25px;border:1px red solid;" />
-					<td id="FL2" style="width:50px; height:25px;border:1px red solid;" />
-					<td id="FL3" style="width:50px; height:25px;border:1px red solid;" />
-					<td id="FL4" style="width:50px; height:25px;border:1px red solid;" />
-					<td id="FL5" style="width:50px; height:25px;border:1px red solid;" />
-					<td id="FL6" style="width:50px; height:25px;border:1px red solid;" />
-					<td id="FL7" style="width:50px; height:25px;border:1px red solid;" />
-				</tr>
-				<tr>
-					<td id="MoL1" style="width:50px; height:25px;border:1px red solid;" />
-					<td id="MoL2" style="width:50px; height:25px;border:1px red solid;" />
-					<td id="MoL3" style="width:50px; height:25px;border:1px red solid;" />
-					<td id="MoL4" style="width:50px; height:25px;border:1px red solid;" />
-					<td id="MoL5" style="width:50px; height:25px;border:1px red solid;" />
-					<td id="MoL6" style="width:50px; height:25px;border:1px red solid;" />
-					<td id="MoL7" style="width:50px; height:25px;border:1px red solid;" />
-				</tr>
-			</table>
+			<h1 id="keymapName">Keymap</h1>
+			<input type="radio" id="layer0" name="layer" value="0" checked><label class="free-label four col" for="layer0">Base</label>
+			<input type="radio" id="layer1" name="layer" value="1"><label class="basic-label four col" for="layer1">Mod</label>
+			<input type="radio" id="layer2" name="layer" value="2"><label class="premium-label four col" for="layer2">Fn</label>
+			<input type="radio" id="layer3" name="layer" value="3"><label class="premium-label four col" for="layer3">Mouse</label>
+			<br><br><br>
+			<div class="keyboard">
+				<div id="lKey0" class="key">~</div>
+				<div id="lKey1" class="key">1</div>
+				<div id="lKey2" class="key">2</div>
+				<div id="lKey3" class="key">3</div>
+				<div id="lKey4" class="key">4</div>
+				<div id="lKey5" class="key">5</div>
+				<div id="lKey6" class="key">6</div>
+				<div class="nokey"></div>
+				<div id="rKey0" class="key">-7-</div>
+				<div id="rKey1" class="key">-8-</div>
+				<div id="rKey2" class="key">-9-</div>
+				<div id="rKey3" class="key">-0-</div>
+				<div id="rKey4" class="key">---</div>
+				<div id="rKey5" class="key">-+-</div>
+				<div id="rKey6" class="key key6">-Delete-</div>
+				<div id="lKey7" class="key key6">-Tab-</div>
+				<div id="lKey8" class="key">-Q-</div>
+				<div id="lKey9" class="key">-w-</div>
+				<div id="lKey10" class="key">-E-</div>
+				<div id="lKey11" class="key">-R-</div>
+				<div id="lKey13" class="key">-T-</div>
+				<div class="nokey"></div>
+				<div id="rKey14" class="key">-Y-</div>
+				<div id="rKey7" class="key">-U-</div>
+				<div id="rKey8" class="key">-I-</div>
+				<div id="rKey9" class="key">-O-</div>
+				<div id="rKey10" class="key">-P-</div>
+				<div id="rKey11" class="key">-[-</div>
+				<div id="rKey12" class="key">-]-</div>
+				<div id="rKey13" class="key">-\-</div>
+				<div id="lKey14" class="key key7">-CapsLock-</div>
+				<div id="lKey15" class="key">-A-</div>
+				<div id="lKey16" class="key"><div>HOLA</div></div>
+				<div id="lKey17" class="key">-D-</div>
+				<div id="lKey18" class="key">-F-</div>
+				<div id="lKey20" class="key">-G-</div>
+				<div class="nokey"></div>
+				<div id="rKey21" class="key">-H-</div>
+				<div id="rKey15" class="key">-J-</div>
+				<div id="rKey16" class="key">-K-</div>
+				<div id="rKey17" class="key">-L-</div>
+				<div id="rKey18" class="key">-;-</div>
+				<div id="rKey19" class="key">-'-</div>
+				<div id="rKey20" class="key key7">-Return-</div>
+				<div id="lKey21" class="key key5">-Shift-</div>
+				<div id="lKey22" class="key">-ISO-</div>
+				<div id="lKey23" class="key">-Z-</div>
+				<div id="lKey24" class="key">-X-</div>
+				<div id="lKey25" class="key">-C-</div>
+				<div id="lKey26" class="key">-V-</div>
+				<div id="lKey27" class="key">-B-</div>
+				<div class="nokey"></div>
+				<div id="rKey22" class="key">-N-</div>
+				<div id="rKey23" class="key">-M-</div>
+				<div id="rKey24" class="key">-,-</div>
+				<div id="rKey25" class="key">-.-</div>
+				<div id="rKey26" class="key">-/-</div>
+				<div id="rKey27" class="key key9">-Shift-</div>
+				<div id="lKey28" class="key key5">-Ctrl-</div>
+				<div id="lKey29" class="key key5">-Alt-</div>
+				<div id="lKey30" class="key key5">-Command-</div>
+				<div id="lKey31" class="key key5">-fn-</div>
+				<div id="lKey33" class="key key7">-space-</div>
+				<div class="nokey"></div>
+				<div id="rKey29" class="key key7">-space-</div>
+				<div id="rKey33" class="key key5">-fn-</div>
+				<div id="rKey34" class="key key5">-Alt-</div>
+				<div id="rKey31" class="key key5">-command-</div>
+				<div id="rKey32" class="key key9">-Ctrl-</div>
+				<div class="nokey"></div>
+				<div class="nokey"></div>
+				<div class="nokey"></div>
+				<div class="nokey"></div>
+				<div id="lKey32" class="key key7">-mod-</div>
+				<div class="nokey"></div>
+				<div id="rKey30" class="key key7">-mod-</div>
+			</div>
 		</div>
 
  		<div id="divMacro" class="hide element">
