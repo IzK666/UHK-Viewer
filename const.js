@@ -1,5 +1,6 @@
 var scancode = [];
 var modifier = [];
+var mouse = [];
 
 scancode[4] = "A";
 scancode[5] = "B";
@@ -133,3 +134,6 @@ modifier[16] = "RCtrl";
 modifier[32] = "RShift";
 modifier[64] = "RAlt";
 modifier[128] = "RSuper";
+mouse[1] = "Left";
+mouse[2] = "Middle";
+mouse[4] = "Right";

@@ -1,239 +1,263 @@
 #sideMenu {
-	height:					100%;
-	width:					250px;
-	position:				fixed;            
-	overflow-y:				auto;
+	height:							100%;
+	width:							250px;
+	position:						fixed;
+	overflow-y:						auto;
 }
 
 .sidenav a {
-	padding:				5px;
-	text-decoration:		none;
-	font-size:				16px;
-	display:				block;
-	background-color:		#eee;
-	text-decoration:		none;
-	color:					#555;
-	margin:					0 20px 0 10px;
+	padding:						5px;
+	text-decoration:				none;
+	font-size:						16px;
+	display:						block;
+	background-color:				#eee;
+	text-decoration:				none;
+	color:							#555;
+	margin:							0 20px 0 10px;
 }
 
 .sidenav a:hover {
-	background-color:		#ccc;
-	color:					black;
+	background-color:				#ccc;
+	color:							black;
 }
 
 .sidenav a.sidetitle {
-	background-color:		#660;
-	color:					white;
-	padding:				12px;
-	border-top-left-radius:	15px;
+	background-color:				#660;
+	color:							white;
+	padding:						12px;
+	border-top-left-radius:			15px;
 }
 
 .sidenav a.sidetitle:not(:first-child) {
-	margin-top:				50px;
+	margin-top:						50px;
 }
 
 .sidenav a.sideselected{
-	background-color:		#888;
-	color:					white;
+	background-color:				#888;
+	color:							white;
 }
 
 .element {
-	position:				absolute;
-	top:					0px;
-	left:					250px;
-	right:					10px;
-	padding:				30px 50px;
+	position:						absolute;
+	top:							0px;
+	left:							250px;
+	right:							10px;
+	padding:						30px 50px;
 }
 
 .error {
-	position:				relative;
-	text-align:				center;
-	margin:					auto;
-	top:					20%;
-	width:					50%;
-	font-size:				2em;
-	border:					5px solid red;
-	background:				#EEE;
+	position:						relative;
+	text-align:						center;
+	margin:							auto;
+	top:							20%;
+	width:							50%;
+	font-size:						2em;
+	border:							5px solid red;
+	background:						#EEE;
 }
 
 .hide {
-	display:				none;
+	display:						none;
 }
 
 .red {
-	color:					red;
+	color:							red;
 }
 
 .info {
-	color:					#0A0;
-	background:				yellow;
-	font-size:				18px;
-	padding:				0 10px;
-	border-radius:			5px;
+	color:							#0A0;
+	background:						yellow;
+	font-size:						18px;
+	padding:						0 10px;
+	border-radius:					5px;
 }
 
 input[type="button"] {
-	font-size:				14px;
-	padding:				10px 50px;
-	border-radius:			5px;
+	font-size:						14px;
+	padding:						10px 50px;
+	border-radius:					5px;
 }
 
 input[type="file"] {
-	font-size:				14px;
+	font-size:						14px;
 }
 
 input[type="text"] {
-	height:					2em;
-	font-size:				14px;
+	height:							2em;
+	font-size:						14px;
 }
 
 select {
-	padding:				5px 30px;
-	font-size:				16px;
+	padding:						5px 30px;
+	font-size:						16px;
 }
 
-#keymapSource option:nth-child(1) {
-    font-weight:			bold;
-    color:					blue;
-    font-size:				18px;
-    text-align:				center;
-    padding:				30px;
+#nkSource option:nth-child(1) {
+    font-weight:					bold;
+    color:							blue;
+    font-size:						18px;
+    text-align:						center;
+    padding:						30px;
 }
 
 #chkCopy, #lblCopy {
-	font-size:				14px;
-	padding:				10px;
+	font-size:						14px;
+	padding:						10px;
 }
 
-#tCreate {
-	width:					50%;
-	font-size:				16px;
+table {
+	width:							50%;
+	font-size:						16px;
 }
 
 #tCreate td {
-	padding:				10px 0px;
+	padding:						10px 0px;
+}
+
+#tmacro {
+	border-collapse:				collapse;
+}
+
+#tmacro tr {
+	border:							1px solid #ccc;
+}
+
+#tmacro td {
+	padding:						10px 20px;
 }
 
 ::-webkit-scrollbar {
-	width:					0.6em;
+	width:							0.6em;
 }
 
 ::-webkit-scrollbar-button {
-	background:				#ccc;
+	background:						#ccc;
 }
 
 ::-webkit-scrollbar-track-piece {
-	background:				#eee;
+	background:						#eee;
 }
 
 ::-webkit-scrollbar-thumb {
-	background:				#b88;
+	background:						#b88;
 }
 
 
 .container {
-	max-width:				850px;
-	width:					100%;
-	margin:					0 auto;
+	max-width:						850px;
+	width:							100%;
+	margin:							0 auto;
 }
 
 .radio {
-	float:					left;
-	width:					15%;
+	float:							left;
+	width:							15%;
 }
 
 .radio:first-of-type {
-	border-top-left-radius:	12px;
-	border-bottom-left-radius:	12px;
+	border-top-left-radius:			12px;
+	border-bottom-left-radius:		12px;
 }
 
 .radio:last-of-type {
-	border-top-right-radius:	12px;
-	border-bottom-right-radius:	12px;
+	border-top-right-radius:		12px;
+	border-bottom-right-radius:		12px;
 }
 
 .cf:before,
 .cf:after {
-    content:				" ";
-    display:				table;
+    content:						" ";
+    display:						table;
 }
 
 .cf:after {
-    clear:					both;
+    clear:							both;
 }
 
 .form {
-	width:					980px;
-	margin:					0 auto;
+	width:							980px;
+	margin:							0 auto;
 }
 
 .layer {
-	width:					100%; 
+	width:							100%;
 }
 
 .form .layer input {
-	display:				none;
+	display:						none;
 }
 
 .form label {
 	position: relative;
-	color:					#333;
-	background-color:		#fff;
-	font-size:				16px;
-	text-align:				center;
-	height:					40px;
-	line-height:			38px;
-	display:				block;
-	cursor:					pointer;
-	border:					1px solid #666;
-	-webkit-box-sizing:		border-box;
-	-moz-box-sizing:		border-box;
-	box-sizing:				border-box;
+	color:							#333;
+	background-color:				#fff;
+	font-size:						16px;
+	text-align:						center;
+	height:							40px;
+	line-height:					38px;
+	display:						block;
+	cursor:							pointer;
+	border:							1px solid #666;
+	-webkit-box-sizing:				border-box;
+	-moz-box-sizing:				border-box;
+	box-sizing:						border-box;
 }
 
 .form .layer input:checked + label {
-	border:					1px solid #333;
-	background-color:		#47f;
-	color:					#fff;
+	border:							1px solid #333;
+	background-color:				#47f;
+	color:							#fff;
 }
 
 .keyboard {
 	display: grid;
 	
-	max-width:				1066px;
-	padding:				20px;
-	position:				absolute;
-	margin:					auto;
-	background-color:		#333;
-	border-radius:			10px;
-	grid-template-columns:	repeat(63, 10px);
-	grid-template-rows:		repeat(5, 50px);
-	grid-gap:				5px;
+	max-width:						1066px;
+	padding:						20px;
+	position:						absolute;
+	margin:							auto;
+	background-color:				#333;
+	border-radius:					10px;
+	grid-template-columns:			repeat(63, 10px);
+	grid-template-rows:				repeat(5, 50px);
+	grid-gap:						5px;
 }
 
 .key {
-    background-color:		#333;
-    color:					#FFF;
-    border:					2px solid grey;
-    border-radius:			5px;
-    grid-column:			span 4;
-    font-size:				15px;
-    text-align:				center;
-    padding-top:			17px;
+    background-color:				#333;
+    color:							#FFF;
+    border:							2px solid grey;
+    border-radius:					5px;
+    grid-column:					span 4;
+    font-size:						15px;
+    text-align:						center;
+    padding-top:					15px;
 }
 
 .key5, .nokey {
-    grid-column: span 5;
+    grid-column:					span 5;
 }
 
 .key6 {
-    grid-column: span 6;
+    grid-column:					span 6;
 }
 
 .key7 {
-    grid-column: span 7;
+    grid-column:					span 7;
 }
 
 .key9 {
-    grid-column: span 9;
+    grid-column:					span 9;
+}
+
+.kmod {
+    grid-column:					span 7;
+	height:							15px;
+	line-height:					0px;
+}
+
+.tiny {
+	color:							#888;
+	font-size:						11px;
+	letter-spacing:					5px;
 }

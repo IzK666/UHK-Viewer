@@ -11,7 +11,7 @@
 		<div id="sideMenu" class="sidenav">
 			<a class="sidetitle">Tools</a>
 			<a href="#" data-menu="divConfig" class="sideselected">Configuration</a>
-			<a href="#" data-menu="divCreate">Create keymap</a>
+			<a href="#" data-menu="divNew">Create keymap</a>
 			<a href="#" data-menu="divClear">Clear layers</a>
 			<a href="#" data-menu="divCopy">Copy layers</a>
 			<!--a href="#" data-menu="divAbout">About</a-->
@@ -21,7 +21,7 @@
 
 		<div id="divConfig" class="element">
 			<h1>Import configuration</h1>
-			<input type="file" id="upConfig" accept=".json">
+			<input type="file" id="cfgUp" accept=".json">
 			<br>
 			<br>
 			<br>
@@ -29,10 +29,10 @@
 			<br>
 			<br>
 			<h1>Export configuration</h1>
-			<input type="button" id="btnDownload" value="Download..." disabled>
+			<input type="button" id="cfgDown" value="Download..." disabled>
 		</div>
 
-		<div id="divCreate" class="element hide">
+		<div id="divNew" class="element hide">
 			<h1>Create new keymap</h1>
 			<table id="tCreate">
 				<tr>
@@ -40,10 +40,10 @@
 						Name:
 					</td>
 					<td style="width:30%;">
-						<input type="text" id="keymapName" style="width:100%;">
+						<input type="text" id="nkName" style="width:100%;">
 					</td>
 					<td>
-						<span id="keymapNameError" class="hide red">Name already in use</span>
+						<span id="nkNameError" class="hide red">Name already in use</span>
 					</td>
 				</tr>
 				<tr>
@@ -51,10 +51,10 @@
 						Abbreviation:
 					</td>
 					<td>
-						<input type="text" id="keymapAbbr" size="3" maxlength="3" onkeyup="var s=this.selectionStart;var e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e);">
+						<input type="text" id="nkAbbr" size="3" maxlength="3" onkeyup="var s=this.selectionStart;var e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e);">
 					</td>
 					<td>
-						<span id="keymapAbbrError" class="hide red">Abbreviation already in use</span>
+						<span id="nkAbbrError" class="hide red">Abbreviation already in use</span>
 					</td>
 				</tr>
 				<tr>
@@ -62,7 +62,7 @@
 						Description (optional):
 					</td>
 					<td colspan="2">
-						<input type="text" id="keymapDesc" style="width:100%;">
+						<input type="text" id="nkDesc" style="width:100%;">
 					</td>
 				</tr>
 				<tr>
@@ -70,14 +70,14 @@
 						Duplicate from:
 					</td>
 					<td colspan="2">
-						<select id="keymapSource" style="width:100%;"></select>
+						<select id="nkSource" style="width:100%;"></select>
 					</td>
 				</tr>
 				<tr>
 					<td colspan="2" style="text-align:center;">
-						<input type="button" id="newKeymap" value="Create new keymap" disabled>
+						<input type="button" id="nkCreate" value="Create new keymap" disabled>
 						<br>
-						<span id="newKeymapInfo" class="hide info">Keymap created succesfully</span>
+						<span id="nkInfo" class="hide info">Keymap created succesfully</span>
 					</td>
 					<td>
 					</td>
@@ -87,23 +87,23 @@
 
 		<div id="divClear" class="hide element">
 			<h1>Clear layer:</h1>
-			<select id="sKeymapC"></select>
-			<select id="sLayerC">
+			<select id="clKeymap"></select>
+			<select id="clLayer">
 				<option value="0" selected="selected">Base</option>
 				<option value="1">Mod</option>
 				<option value="2">Fn</option>
 				<option value="3">Mouse</option>
 			</select>
-			<select id="sSideC">
+			<select id="clSide">
 				<option value="both">Both sides</option>
 				<option value="1">Left side</option>
 				<option value="0">Right side</option>
 			</select>
 			<br><br><br>
 			<br><br><br>
-			<input type="button" id="btnClear" value="Clear">
+			<input type="button" id="clClear" value="Clear" disabled>
 			<br>
-			<span id="btnClearInfo" class="hide info">Layer cleared succesfully</span>
+			<span id="clInfo" class="hide info">Layer cleared succesfully</span>
 		</div>
 
 		<div id="divError" class="error hide">
@@ -112,42 +112,39 @@
 
 		<div id="divCopy" class="hide element">
 			<h1>Copy from:</h1>
-			<select id="sKeymapF"></select>
-			<select id="sLayerF">
+			<select id="cpKF"></select>
+			<select id="cpLF">
 				<option value="all">All</option>
-				<option value="0" selected="selected">Base</option>
+				<option value="0" selected>Base</option>
 				<option value="1">Mod</option>
 				<option value="2">Fn</option>
 				<option value="3">Mouse</option>
 			</select>
-			<select id="sSideF">
-				<option value="both">Both sides</option>
+			<select id="cpSF">
+				<option value="both" selected>Both sides</option>
 				<option value="1">Left side</option>
 				<option value="0">Right side</option>
 			</select>
 			<br><br><br>
 			<h1>Paste to:</h1>
-			<select id="sKeymapT"></select>
-			<select id="sLayerT">
+			<select id="cpKT"></select>
+			<select id="cpLT">
 				<option value="all">All</option>
-				<option value="0" selected="selected">Base</option>
+				<option value="0" selected>Base</option>
 				<option value="1">Mod</option>
 				<option value="2">Fn</option>
 				<option value="3">Mouse</option>
 			</select>
-			<select id="sSideT">
-				<option value="both">Both sides</option>
+			<select id="cpST">
+				<option value="both" selected>Both sides</option>
 				<option value="1">Left side</option>
 				<option value="0">Right side</option>
 			</select>
 			<br><br><br>
 			<br><br><br>
-			<input type="button" id="btnCopy" value="Copy" disabled>
+			<input type="button" id="cpCopy" value="Copy" disabled>
 			<br>
-			<span id="btnCopyInfo" class="hide info">Layer copied succesfully</span>
-			<br><br>
-			<input type="checkbox" id="chkCopy">
-			<label for="chkCopy" id="lblCopy">Allow copy layers within the same keymap</label><br>
+			<span id="cpInfo" class="hide info">Layer copied succesfully</span>
 		</div>
 
 		<div id="divError" class="error hide">
@@ -155,7 +152,8 @@
 		</div>
 
 		<div id="divKeymap" class="hide element">
-			<h1 id="keymapTitle">Keymap</h1>
+			<h1 id="keymapTitle"></h1>
+			<br><br><br>
 			<form class="form cf">
 				<section class="layer cf">
 					<input type="radio" id="layer0" name="layer" value="0" checked><label class="radio" for="layer0">Base</label>
@@ -239,15 +237,24 @@
 				<div class="nokey"></div>
 				<div class="nokey"></div>
 				<div class="nokey"></div>
-				<div id="lKey32" class="key key7"></div>
+				<div id="lKey32" class="key kmod"></div>
 				<div class="nokey"></div>
-				<div id="rKey30" class="key key7"></div>
+				<div id="rKey30" class="key kmod"></div>
 			</div>
 		</div>
 
  		<div id="divMacro" class="hide element">
-			<h1>Macro</h1>
-			<p>A macro</p>
+			<h1 id="macroTitle"></h1>
+			<table id="tmacro">
+				<tr>
+					<td>
+						Text
+					</td>
+					<td>
+						Hello kitty
+					</td>
+				</tr>
+			</table>
 		</div>
 
 		<div id="divAbout" class="hide element">
