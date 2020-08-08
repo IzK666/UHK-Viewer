@@ -8,6 +8,10 @@ You can try it online [here](https://izk666.github.io/UHK-Viewer/), or dowload a
 
 ## Tools
 
-- Create new keymaps (duplicated or blank)
-- Copy layers
-- Clear layers
+- Create new blank keymaps
+- Copy/Paste/Clear layers (Left side and right side separeately)
+- Rename keymaps
+
+## Extras
+
+- Colored macros for [Karel's firmware](https://github.com/kareltucek)

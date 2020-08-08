@@ -11,11 +11,11 @@
 		<div id="sideMenu" class="sidenav">
 			<a class="sidetitle">Tools</a>
 			<a href="#" data-menu="divConfig" class="sideselected">Configuration</a>
-			<a href="#" data-menu="divNew">Create keymap</a>
+			<!--a href="#" data-menu="divNew">Create keymap</a>
 			<a href="#" data-menu="divClear">Clear layers</a>
 			<a href="#" data-menu="divCopy">Copy layers</a>
 			<!--a href="#" data-menu="divAbout">About</a-->
-			<a class="sidetitle" id="mk">Keymaps</a>
+			<a class="sidetitle" id="mk"><img id="newKeymap" src="new.png" class="hide" style="float:right;position:relative;top:-1px;width:20px;">Keymaps</a>
 			<a class="sidetitle" id="mm">Macros</a>
 		</div>
 
@@ -152,8 +152,13 @@
 		</div>
 
 		<div id="divKeymap" class="hide element">
-			<h1 id="keymapTitle"></h1>
-			<br><br><br>
+			<h1 id="keymapTitl2e"></h1>
+			<div id="keymapTitle">
+				<input type="text" id="kmName" placeholder="Name of the keymap">
+				(
+				<input type="text" id="kmAbbr" placeholder="Abbreviation" maxlength="3">
+				)
+			</div>
 			<form class="form cf">
 				<section class="layer cf">
 					<input type="radio" id="layer0" name="layer" value="0" checked><label class="radio" for="layer0">Base</label>
@@ -162,7 +167,6 @@
 					<input type="radio" id="layer3" name="layer" value="3"><label class="radio" for="layer3">Mouse</label>
 				</section>
 			</form>
-			<br><br><br>
 			<div class="keyboard">
 				<div id="lKey0" class="key"></div>
 				<div id="lKey1" class="key"></div>
@@ -241,6 +245,18 @@
 				<div class="nokey"></div>
 				<div id="rKey30" class="key kmod"></div>
 			</div>
+			<div class="threedots">
+				<img id="threeimg" src="dots.png">
+				<input type="text" id="leftKeymap" class="hide"><input type="text" id="leftLayer" class="hide">
+				<input type="text" id="bothKeymap" class="hide"><input type="text" id="bothLayer" class="hide">
+				<input type="text" id="rightKeymap" class="hide"><input type="text" id="rightLayer" class="hide">
+			</div>
+			<div class="note">
+				<p>Note</p>
+				<ul>
+					<li>If you copy a base layer to another different layer, remember to reassign the mod/fn/mouse keys in agent, as they won't work on other layers.</li>
+				</ul>
+			</div>
 		</div>
 
  		<div id="divMacro" class="hide element">
@@ -260,7 +276,9 @@
 		<div id="divAbout" class="hide element">
 			<h1>UHK Viewer</h1>
 			<p>Create new layers easily</p>
-			<br>
+		</div>
+
+		<div id="keyGlow" class="hide element">
 		</div>
 
 	</body>

@@ -1,3 +1,10 @@
+
+$.fn.textWidth = function(text, font) {
+    if (!$.fn.textWidth.fakeEl) $.fn.textWidth.fakeEl = $('<span>').hide().appendTo(document.body);
+    $.fn.textWidth.fakeEl.text(text || this.val() || this.text()).css('font', font || this.css('font'));
+    return $.fn.textWidth.fakeEl.width();
+};
+
 var jsondata;
 
 
@@ -7,27 +14,38 @@ $( document ).ready(function() {
 
 	$("#nkCreate").click(nkCreate);
 	$("#nkName").on('input', function(){nkNameCheck();});
-	$("#nkAbbr").on('input', function(){nmkAbbrCheck();});
+	$("#nkAbbr").on('input', function(){nkAbbrCheck();});
 	$("#nkName").change(nkNameChange);
 
-	$("a").click(menuselect);
+	$("#sideMenu a").click(menuselect);
+	$('#newKeymap').click(newKeymap);
 
-	$("#cpKF").change(copyChange);
-	$("#cpKT").change(copyChange);
-	$("#cpLF").change(function(){if ($("#cpLF").val()=="all"){$("#cpLT").val("all")}else if ($("#cpLT").val()=="all"){$("#cpLT").val("0")};copyChange();}); // If layer is All, destiny should be all
-	$("#cpLT").change(function(){if ($("#cpLT").val()=="all"){$("#cpLF").val("all")}else if ($("#cpLF").val()=="all"){$("#cpLF").val("0")};copyChange();});
-	$("#cpSF").change(function(){$("#cpST").val($("#cpSF").val());copyChange();}); // We need to match sides (Left-left, right-right, both-both
-	$("#cpST").change(function(){$("#cpSF").val($("#cpST").val());copyChange();});
-	$("#cpCopy").click(copyLayer);
-	$("#clClear").click(clearLayer);
+	$("#cpKF").change(copyChangeForm);
+	$("#cpKT").change(copyChangeForm);
+	$("#cpLF").change(function(){if ($("#cpLF").val()=="all"){$("#cpLT").val("all")}else if ($("#cpLT").val()=="all"){$("#cpLT").val("0")};copyChangeForm();}); // If layer is All, destiny should be all
+	$("#cpLT").change(function(){if ($("#cpLT").val()=="all"){$("#cpLF").val("all")}else if ($("#cpLF").val()=="all"){$("#cpLF").val("0")};copyChangeForm();});
+	$("#cpSF").change(function(){$("#cpST").val($("#cpSF").val());copyChangeForm();}); // We need to match sides (Left-left, right-right, both-both
+	$("#cpST").change(function(){$("#cpSF").val($("#cpST").val());copyChangeForm();});
+	$("#cpCopy").click(copyLayerForm);
+	$("#clClear").click(clearLayerForm);
 	$('#clKeymap').change(clearCheck);
 	$("input[type='radio'").change(changeLayer);
 
-
+	$('#threeimg').click(showMenu);
+	$('#kmName').on('input', function(){$(this).css("width", Math.ceil($(this).textWidth())+18)});
+	$('#kmAbbr').on('input', function() {
+		var s=$(this)[0].selectionStart;
+		var e=$(this)[0].selectionEnd;
+		$(this).val($(this).val().toUpperCase());
+		$(this)[0].setSelectionRange(s,e);
+		$(this).css("width", $(this).textWidth()+10);
+	});
+	$('#kmName').change(kmNewName);
+	$('#kmAbbr').change(kmNewAbbr);
 
 	function showError(text) {
 		$("#txtError").html(text);
-		$("#divError").show().delay(2000).fadeOut(500);
+		$("#divError").show().delay(1500).hide(0);
 	}
 
 	function menuselect() {
@@ -63,9 +81,9 @@ $( document ).ready(function() {
 		// Check name while you write
 		name = $("#nkName").val();
 		abbr = $("#nkAbbr").val();
-		if (checkName(name)) {
+		if (checkNameForm(name)) {
 			$("#nkNameError").hide();
-			$("#nkCreate").prop('disabled', (!checkAbbr(abbr) || name.length == 0 || abbr.length == 0));
+			$("#nkCreate").prop('disabled', (!checkAbbrForm(abbr) || name.length == 0 || abbr.length == 0));
 		} else {
 			$("#nkNameError").show();
 			$("#nkCreate").prop('disabled', true);
@@ -76,9 +94,9 @@ $( document ).ready(function() {
 		// Check abbreviation while you write
 		name = $("#nkName").val();
 		abbr = $("#nkAbbr").val();
-		if (checkAbbr(abbr)) {
+		if (checkAbbrForm(abbr)) {
 			$("#nkAbbrError").hide();
-			$("#nkCreate").prop('disabled', (!checkName(name) || name.length == 0 || abbr.length == 0));
+			$("#nkCreate").prop('disabled', (!checkNameForm(name) || name.length == 0 || abbr.length == 0));
 		} else {
 			$("#nkAbbrError").show();
 			$("#nkCreate").prop('disabled', true);
@@ -94,7 +112,7 @@ $( document ).ready(function() {
 			if (kabbr.val().length == 0) {
 				kabbr.val(kname.val().slice(0, 3).toUpperCase());
 				count = 2;
-				while ((count < 10) && (!checkAbbr(kabbr.val()))) {
+				while ((count < 10) && (!checkAbbrForm(kabbr.val()))) {
 					kabbr.val(kabbr.val().slice(0, 2) + String(count++));
 				}
 			}
@@ -125,7 +143,6 @@ $( document ).ready(function() {
 					jsondata.keymaps[index].layers[i].modules[j] = jsondata.keymaps[source].layers[i].modules[j];
 		}
 		loadKeymaps();
-		loadMacros();
 		$("#nkInfo").show().delay(2000).hide(0);
 		$("#nkName").val("");
 		$("#nkAbbr").val("");
@@ -133,7 +150,7 @@ $( document ).ready(function() {
 		$("#nkCreate").attr("disabled", true);
 	}
 
-	function checkName(name) {
+	function checkNameForm(name) {
 		// Check if name is not used
 		// Returns True if available
 		name = name.toUpperCase();
@@ -143,7 +160,7 @@ $( document ).ready(function() {
 		return true;
 	}
 
-	function checkAbbr(name) {
+	function checkAbbrForm(name) {
 		// Check if abbreviation is not used
 		// Returns True if available
 		name = name.toUpperCase();
@@ -151,6 +168,106 @@ $( document ).ready(function() {
 			if (jsondata.keymaps[i].abbreviation.toUpperCase() == name)
 				return false;
 		return true;
+	}
+
+	function newKeymap() {
+		var name = "New keymap";
+		var abbr = "NEW";
+		name = getName(name);
+		abbr = getAbbr(abbr);
+		createKeymap(name, abbr);
+
+	}
+
+	function getName(name) {
+		// Get a valid (not used) name
+		var newname = name.toUpperCase();
+		for (i=0; i<jsondata.keymaps.length; i++)
+			if (jsondata.keymaps[i].name.toUpperCase() == newname) {
+				var index = name.search(/\(\d+\)$/);
+				if (index > 0) {
+					var number = parseInt(name.slice(index+1, -1)) + 1;
+					name = name.slice(0, index) + "(" + number + ")";
+					return getName(name);
+				} else {
+					return (getName(name + " (2)"));
+				}
+			}
+		return name;
+	}
+
+	function getAbbr(name, digits=0) {
+		// Check if abbreviation is not used
+		// Returns True if available
+		var newname = name.toUpperCase();
+		for (i=0; i<jsondata.keymaps.length; i++)
+			if (jsondata.keymaps[i].abbreviation.toUpperCase() == newname) {
+				if (digits > 0) {
+					var number = parseInt(name.slice(3-digits)) +1;
+					name = name.slice(0, 3-(number > 9 ? 2 : 1)) + number;
+					return getAbbr(name, (number > 9 ? 2:1));
+				} else
+					return (getAbbr(name.slice(0,2) + "2", 1));
+			}
+		return name;
+	}
+
+	function createKeymap(aname, abbr) {
+		// Create a new blank keymap
+		let layer = [{modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}];
+		for (i=0; i<layer.length; i++)
+			for (j=0; j<2; j++)
+				for (k=0; k<35; k++)
+					layer[i].modules[j].keyActions.push(null);
+		let keymap = {isDefault: false, abbreviation: abbr, name: aname, description: "", layers: layer};
+		let index = 0
+		let capsname = aname.toUpperCase();
+		while (index < jsondata.keymaps.length && jsondata.keymaps[index].name.toUpperCase() < capsname) {
+			index++;
+		}
+		jsondata.keymaps.splice(index, 0, keymap);
+		loadKeymaps();
+		$('.sidenav a:nth-child('+(+3+index+1)+')').addClass("glow");
+		//$('.sidenav a:nth-child('+(+6+index+1)+')').css("background-color", '#FF5');
+	}
+
+	function kmNewName() {
+		var old = jsondata.keymaps[$('.sideselected').attr("data-index")].name;
+		if (old == $('#kmName').val())
+			return;
+		if ($('#kmName').val().trim().length == 0)
+			$('#kmName').val(old).css("width", Math.ceil($('#kmName').textWidth())+18);
+		else {
+			$('#kmName').val(getName($('#kmName').val())).css("width", Math.ceil($('#kmName').textWidth())+18);
+		
+			// Now, we have to sort the keymap into the correct position
+			old = parseInt($('.sideselected').attr("data-index"));
+			let index = 0
+			let capsname = $("#kmName").val().toUpperCase();
+			while (index < jsondata.keymaps.length && jsondata.keymaps[index].name.toUpperCase() < capsname) {
+				index++;
+			}
+			jsondata.keymaps[old].name = $("#kmName").val();
+			if (index != old && index != old+1) {
+				console.log("Keymap " + $("#kmName").val() + " move from "+old + " to "+index);
+				jsondata.keymaps.splice(index, 0, jsondata.keymaps[old]);
+				jsondata.keymaps.splice((old > index) ? old+1 : old, 1);
+			}
+			if (index > old)
+				index--;
+			loadKeymaps();
+			$('.sidenav a:nth-child('+(+3+index+1)+')').addClass("sideselected");
+		}
+	}
+	
+	function kmNewAbbr() {
+		var old = jsondata.keymaps[$('.sideselected').attr("data-index")].abbreviation
+		if (old == $('#kmAbbr').val())
+			return;
+		if ($('#kmAbbr').val().trim().length == 0)
+			$('#kmAbbr').val(old).css("width", $('#kmAbbr').textWidth()+10);
+		else
+			$('#kmAbbr').val(getAbbr($('#kmAbbr').val())).css("width", $('#kmAbbr').textWidth()+10);
 	}
 
 
@@ -162,7 +279,7 @@ $( document ).ready(function() {
 	/*	Copy layers						*/
 	/************************************/
 
-	function checkCopyOptions() {
+	function checkCopyForm() {
 		if ($('#cpKF').val() === null || $('#cpLF').val() === null || $('#cpKT').val() === null || $('#cpLT').val() === null)
 			return false;
 
@@ -180,31 +297,59 @@ $( document ).ready(function() {
 			return ($('#cpKF').val() != $('#cpKT').val());
 	}
 
-	function copyChange() {
-		$('#cpCopy').attr("disabled", !checkCopyOptions());
+	function copyChangeForm() {
+		$('#cpCopy').attr("disabled", !checkCopyForm());
 	}
 
-	function copyLayer() {
-		if (checkCopyOptions()) {
-			side1 = ($('#cpSF').val() == "both") ? 0 : $('#cpSF').val();
-			side2 = ($('#cpSF').val() == "both") ? 1 : $('#cpSF').val();
+	function copyLayerForm() {
+		if (checkCopyForm()) {
 			if ($('#cpLT').val() == "all") {
 				for (i=0; i< 4; i++) {
-					if ($('#cpSF').val() != "1")
-						jsondata.keymaps[$('#cpKT').val()].layers[i].modules[0] = jsondata.keymaps[$('#cpKF').val()].layers[i].modules[0];
-					if ($('#cpSF').val() != "0")
-						jsondata.keymaps[$('#cpKT').val()].layers[i].modules[1] = jsondata.keymaps[$('#cpKF').val()].layers[i].modules[1];
+				copyLayer($('#cpKF').val(), i, $('#cpSF').val(), $('#cpKT').val(), i);
 				}
 			} else {
-				if ($('#cpSF').val() != "1")
-					jsondata.keymaps[$('#cpKT').val()].layers[$('#cpLT').val()].modules[0] = jsondata.keymaps[$('#cpKF').val()].layers[$('#cpLF').val()].modules[0];
-				if ($('#cpSF').val() != "0")
-					jsondata.keymaps[$('#cpKT').val()].layers[$('#cpLT').val()].modules[1] = jsondata.keymaps[$('#cpKF').val()].layers[$('#cpLF').val()].modules[1];
+				copyLayer($('#cpKF').val(), $('#cpLF').val(), $('#cpSF').val(), $('#cpKT').val(), $('#cpLT').val());
 			}
 			$("#cpInfo").show().delay(2000).hide(0);
 		}
 	}
 
+	function copyLayer(sourceKeymap, sourceLayer, side, destKeymap, destLayer) {
+		if (side != 1)
+			jsondata.keymaps[destKeymap].layers[destLayer].modules[0] = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[0];
+		if (side != 0)
+			jsondata.keymaps[destKeymap].layers[destLayer].modules[1] = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[1];
+	}
+
+	function keyCopy() {
+		$('#'+$(this).parent().attr("data-side")+'Keymap').val($(".sideselected").attr("data-index"));
+		$('#'+$(this).parent().attr("data-side")+'Layer').val($("input[name='layer']:checked").val());
+		hideMenu();
+	}
+	
+	function keyPaste() {
+		if (($('#'+$(this).parent().attr("data-side")+'Keymap').val() == "") || ($('#'+$(this).parent().attr("data-side")+'Layer').val() == "")) {
+			// showError("Copy first, then paste");
+			return false;
+		}
+		var dkeymap = $(".sideselected").attr("data-index");
+		var dlayer = $("input[name='layer']:checked").val();
+		if (($('#'+$(this).parent().attr("data-side")+'Keymap').val() == dkeymap) && ($('#'+$(this).parent().attr("data-side")+'Layer').val() == dlayer)) {
+			console.log("Nothing to copy");
+		} else {
+			var side = ($(this).parent().attr("data-side") == "left" ? 1 : $(this).parent().attr("data-side") == "right" ? 0 : "Both");
+			copyLayer($('#'+$(this).parent().attr("data-side")+'Keymap').val(), $('#'+$(this).parent().attr("data-side")+'Layer').val(), side, dkeymap, dlayer);
+			viewKeymap(dkeymap, dlayer);
+		}
+		hideMenu();
+	}
+	
+	function keyClear() {
+		// confirm question
+		clearLayer($(".sideselected").attr("data-index"), $("input[name='layer']:checked").val(), ($(this).parent().attr("data-side") == "left" ? 1 : $(this).parent().attr("data-side") == "right" ? 0 : "Both"));
+		viewKeymap($(".sideselected").attr("data-index"), $("input[name='layer']:checked").val());
+		hideMenu();
+	}
 	/************************************/
 
 
@@ -213,16 +358,20 @@ $( document ).ready(function() {
 	/*	Clear layers					*/
 	/************************************/
 
-	function clearLayer() {
-		for (i=0; i<36; i++) {
-			if ($('#clSide').val() != "1")
-				jsondata.keymaps[$('#clKeymap').val()].layers[$('#clLayer').val()].modules[0].keyActions[i] = null;
-			if ($('#clSide').val() != "0")
-				jsondata.keymaps[$('#clKeymap').val()].layers[$('#clLayer').val()].modules[1].keyActions[i] = null;
-		}
+	function clearLayerForm() {
+		clearLayer($('#clKeymap').val(), $('#clLayer').val(), $('#clSide').val());
 		$("#clInfo").show().delay(2000).hide(0);
 	}
 	
+	function clearLayer(keymap, layer, side) {
+		for (i=0; i<36; i++) {
+			if (side != 1)
+				jsondata.keymaps[keymap].layers[layer].modules[0].keyActions[i] = null;
+			if (side != 0)
+				jsondata.keymaps[keymap].layers[layer].modules[1].keyActions[i] = null;
+		}
+	}
+
 	function clearCheck() {
 		$('#clClear').attr('disabled', ($('#clKeymap').val() == null));
 	}
@@ -253,6 +402,7 @@ $( document ).ready(function() {
 		if ('files' in input && input.files.length > 0) {
 			getFileConfig(input.files[0]);
 		}
+		$('#newKeymap').show();
 	}
 
 	function getFileConfig(file) {
@@ -283,7 +433,7 @@ $( document ).ready(function() {
 
 	/* Load keymaps on side menu and select dropdowns. */
 	function loadKeymaps() {
-		$("a").off(); // Remove menu listeners
+		$("#sideMenu a").off(); // Remove menu listeners
 		while ($('#mk').next().attr('id') != "mm") // Remove all keyboard from menu
 			$('#mk').next().remove();
 		
@@ -312,11 +462,15 @@ $( document ).ready(function() {
 			$("#nkSource").append('<option value="' + i + '">' + jsondata.keymaps[i].name + '</option>');
 		}
 		$('#mk').after(items);
-		$("a").click(menuselect); // Create menu listeners
+		$("#sideMenu a").click(menuselect); // Create menu listeners
 	}
 
 	function changeKeymap(keymap) {
-		$('#keymapTitle').text(jsondata.keymaps[keymap].name + " (" + jsondata.keymaps[keymap].abbreviation + ")");
+		//$('#keymapTitle').text(jsondata.keymaps[keymap].name + " (" + jsondata.keymaps[keymap].abbreviation + ")");
+		$('#kmName').val(jsondata.keymaps[keymap].name);
+		$('#kmName').css("width", Math.ceil($('#kmName').textWidth())+18);
+		$('#kmAbbr').val(jsondata.keymaps[keymap].abbreviation);
+		$('#kmAbbr').css("width", $('#kmAbbr').textWidth()+10);
 		viewKeymap(keymap, 0);
 	}
 
@@ -325,7 +479,6 @@ $( document ).ready(function() {
 	}
 
 	function viewKeymap(keymap, layer) {
-		
 		for (i=0; i<35; i++) {
 			$('#lKey'+i).text("");
 			$('#rKey'+i).text("");
@@ -381,6 +534,88 @@ $( document ).ready(function() {
 		}
 	}
 
+	function showMenu() {
+		var screen = $('<div id="lockScreen"/>');
+		screen.click(hideMenu);
+
+		var copy = $('<div/>')
+			.addClass("copy")
+			.append($('<img>')
+				.attr('src', 'copy.png')
+				.css('width', '100%')
+			);
+
+		var paste = $('<div/>')
+			.addClass("paste")
+			.append($('<img>')
+				.attr('src', 'paste.png')
+				.css('width', '100%')
+			);
+
+		var clear = $('<div/>')
+			.addClass("clear")
+			.append($('<img>')
+				.attr('src', 'remove.png')
+				.css('width', '100%')
+			);
+
+		var menuL = $('<div id="keyMenu"/>').addClass("keymenu");
+		menuL.css("left", '565px');
+		menuL.attr("data-side", "left");
+		menuL.append(clear.clone());
+		menuL.append(copy.clone());
+		menuL.append(paste.clone());
+		menuL.click(function(e){e.stopPropagation();});
+		menuL.hover(glow, noGlow);
+		menuL.appendTo(screen);
+
+		/*var menuB = $('<div id="keyMenu"/>').addClass("keymenu");
+		menuB.css("left", '815px');
+		menuB.attr("data-side", "both");
+		menuB.append(clear.clone());
+		menuB.append(copy.clone());
+		menuB.append(paste.clone());
+		menuB.click(function(e){e.stopPropagation();});
+		menuB.hover(glow, noGlow);
+		menuB.appendTo(screen);*/
+
+		var menuR = $('<div id="keyMenu"/>').addClass("keymenu");
+		menuR.css("left", '1065px');
+		menuR.attr("data-side", "right");
+		menuR.append(clear.clone());
+		menuR.append(copy);
+		menuR.append(paste);
+		menuR.click(function(e){e.stopPropagation();});
+		menuR.hover(glow, noGlow);
+		menuR.appendTo(screen);
+
+		$("body").append(screen);
+		
+		$('.clear').click(keyClear);
+		$('.copy').click(keyCopy);
+		$('.paste').click(keyPaste);
+	}
+
+	function hideMenu() {
+		$('.copy').off();
+		$('.paste').off();
+		$('#lockScreen').remove();
+		noGlow();
+	}
+	
+	function glow() {
+		$('#keyGlow').removeClass("hide");
+		if ($(this).attr("data-side") == "left")
+			$('#keyGlow').css("background", "linear-gradient(90deg, #FFF2 0%,#FFF2 46%,#000A 52%,#000A 100%)");
+		else if ($(this).attr("data-side") == "right")
+			$('#keyGlow').css("background", "linear-gradient(90deg, #000A 0%,#000A 44%,#FFF2 50%,#FFF2 100%)");
+		else
+			$('#keyGlow').css("background", "#FFF2");
+	}
+	
+	function noGlow() {
+		$('#keyGlow').addClass("hide");
+	}
 
 
 	/************************************/
@@ -393,7 +628,7 @@ $( document ).ready(function() {
 	
 	
 	function loadMacros() {
-		$("a").off();
+		$("#sideMenu a").off();
 		while ($('#mm').next().attr('href') !== undefined)
 			$('#mm').next().remove();
 		items = "";
@@ -401,7 +636,7 @@ $( document ).ready(function() {
 			items += "<a href=\"#\" data-menu=\"divMacro\" data-index=" + i + ">" + jsondata.macros[i].name + "</a>";
 		}
 		$('#mm').after(items);
-		$("a").click(menuselect);
+		$("#sideMenu a").click(menuselect);
 	}
 
 	function viewMacro(macro) {
@@ -411,7 +646,8 @@ $( document ).ready(function() {
 		for (i=0; i<jsondata.macros[macro].macroActions.length; i++) {
 			action = jsondata.macros[macro].macroActions[i].macroActionType;
 			if (action == "text") {
-				$('#tmacro').append("<tr><td>Write text</td><td>" + jsondata.macros[macro].macroActions[i].text + "</td></tr>")
+				$('#tmacro').append("<tr><td>Write text</td><td class='macroCommand'>" + KarelSyntax(jsondata.macros[macro].macroActions[i].text) + "</td></tr>");
+				//$('#tmacro').append("<tr><td>Write text</td><td class='macroCommand'>" + (jsondata.macros[macro].macroActions[i].text) + "</td></tr>");
 			} else if (action == "key") {
 				action = capitalize(jsondata.macros[macro].macroActions[i].action) + " key";
 				value = "";
@@ -423,24 +659,41 @@ $( document ).ready(function() {
 					value += scancode[jsondata.macros[macro].macroActions[i].scancode];
 				if (value.endsWith(" + "))
 					value = value.slice(0, -3);
-				$('#tmacro').append("<tr><td>" + action + "</td><td>" + value + "</td></tr>")
+				$('#tmacro').append("<tr><td>" + action + "</td><td class='macroCommand'>" + value + "</td></tr>")
 			} else if (action == "delay") {
-				$('#tmacro').append("<tr><td>Delay</td><td>" + jsondata.macros[macro].macroActions[i].delay + "</td></tr>")
+				$('#tmacro').append("<tr><td>Delay</td><td class='macroCommand'>" + jsondata.macros[macro].macroActions[i].delay + "</td></tr>")
 			} else if (action == "moveMouse") {
-				$('#tmacro').append("<tr><td>Move mouse</td><td>x:" + jsondata.macros[macro].macroActions[i].x + ", y:"+ jsondata.macros[macro].macroActions[i].y + "</td></tr>")
+				$('#tmacro').append("<tr><td>Move mouse</td><td class='macroCommand'>x:" + jsondata.macros[macro].macroActions[i].x + ", y:"+ jsondata.macros[macro].macroActions[i].y + "</td></tr>")
 			} else if (action == "scrollMouse") {
-				$('#tmacro').append("<tr><td>Scroll mouse</td><td>x:" + jsondata.macros[macro].macroActions[i].x + ", y:"+ jsondata.macros[macro].macroActions[i].y + "</td></tr>")
+				$('#tmacro').append("<tr><td>Scroll mouse</td><td class='macroCommand'>x:" + jsondata.macros[macro].macroActions[i].x + ", y:"+ jsondata.macros[macro].macroActions[i].y + "</td></tr>")
 			} else if (action == "mouseButton") {
 				value = "";
 				mouse.forEach(function(item, index){if (index & jsondata.macros[macro].macroActions[i].mouseButtonsMask) value += item + " + ";});
 				if (value.endsWith(" + "))
 					value = value.slice(0, -3);
-				$('#tmacro').append("<tr><td>" + capitalize(jsondata.macros[macro].macroActions[i].action) + " button</td><td>" + value + "</td></tr>");
+				$('#tmacro').append("<tr><td>" + capitalize(jsondata.macros[macro].macroActions[i].action) + " button</td><td class='macroCommand'>" + value + "</td></tr>");
 			} else
-				$('#tmacro').append("<tr><td colspan='2'>" + jsondata.macros[macro].macroActions[i].macroActionType + "</td></tr>")
+				$('#tmacro').append("<tr><td colspan='2'>" + jsondata.macros[macro].macroActions[i].macroActionType + "</td></tr>");
 		}
 	}
 
+	function KarelSyntax(text){
+		if (text[0] != "$")
+			return text;
+		text = text.replace(/^(\$(?!if)\w+)/, '<span style="color:blue">$1</span>');
+		text = text.replace(/^(\$if\w+)/, '<span style="color:darkviolet">$1</span>');
+		text = text.replace(/([#%@][\d\-]+)/, '<span style="color:red;">$1</span>');
+		var arr = text.split(" ");
+		for (j=1; j<arr.length; j++) {
+			if (arr[j][0].match(/[$#%@<]/) != null)
+				continue;
+			if (KarelMod.indexOf(arr[j]) >= 0)
+				text = text.replace(arr[j], '<span style="color:limegreen;">' + arr[j]+ '</span>');
+			else if (Karel.indexOf(arr[j]) >= 0)
+				text = text.replace(arr[j], '<span style="color:blue;">' + arr[j]+ '</span>');
+		}
+		return text;
+	}
 
 
 	/************************************/
