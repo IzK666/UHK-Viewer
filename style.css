@@ -97,9 +97,6 @@
 /*	Forms				*/
 /* ******************** */
 
-.red {
-	color:							red;
-}
 
 .info {
 	color:							#0A0;
@@ -124,24 +121,6 @@ input[type="text"] {
 	font-size:						14px;
 }
 
-select {
-	padding:						5px 30px;
-	font-size:						16px;
-}
-
-#nkSource option:nth-child(1) {
-    font-weight:					bold;
-    color:							blue;
-    font-size:						18px;
-    text-align:						center;
-    padding:						30px;
-}
-
-#chkCopy, #lblCopy {
-	font-size:						14px;
-	padding:						10px;
-}
-
 
 /* ******************** */
 /*	MACROS				*/
@@ -150,10 +129,6 @@ select {
 table {
 	width:							50%;
 	font-size:						16px;
-}
-
-#tCreate td {
-	padding:						10px 0px;
 }
 
 #tmacro {
@@ -336,7 +311,7 @@ table {
 /*	Keyboard related	*/
 /* ******************** */
 
-#keymaptitle {
+#keymapTitle {
 	font-size:						24px;
 	font-weight:					bold;
 }
@@ -367,18 +342,18 @@ table {
 	margin-top:						50px;
 }
 
-#threeimg:hover,
-.clear:hover,
-.copy:hover,
-.paste:hover {
-	transform:						scale(1.5);
-}
-
-#threeimg {
+#options {
 	width:							25px;
 	margin-top:						10px;
 	margin-left:					550px;
 	transition:						transform .2s;
+}
+
+#options:hover,
+.clear:hover,
+.copy:hover,
+.paste:hover {
+	transform:						scale(1.5);
 }
 
 #lockScreen {
@@ -388,7 +363,7 @@ table {
 	background:						#0003;
 }
 
-#keyMenu {
+#keyDivOptions {
 	top:							290px;
 	height:							auto;
 	width:							100px;
@@ -399,27 +374,25 @@ table {
 	background:						#333;
 }
 
-#keyGlow {
+#keyboardGlow {
 	width:							950px;
 	height:							315px;
 	border-radius:					15px;
 	border-bottom-left-radius:		50px;
 	border-bottom-right-radius:		50px;
 	position:						absolute;
-	top:							303px;
+	top:							316px;
 	left:							405px;
 	padding:						0px;
 }
 
 .clear {
 	width:							24%;
-	float:							right;
 	padding:						1px;
 }
 
 .copy {
 	width:							25%;
-	float:							left;
 	padding:						1px 2px;
 }
 
@@ -428,4 +401,12 @@ table {
 	float:							left;
 	padding:						1px 2px;
 	margin-top:						1px;
+}
+
+.iconright {
+	float:							right;
+}
+
+.iconleft {
+	float:							left;
 }

@@ -12,27 +12,14 @@ $( document ).ready(function() {
 	$("#cfgUp").change(uploadFile);
 	$("#cfgDown").click(downloadFile);
 
-	$("#nkCreate").click(nkCreate);
-	$("#nkName").on('input', function(){nkNameCheck();});
-	$("#nkAbbr").on('input', function(){nkAbbrCheck();});
-	$("#nkName").change(nkNameChange);
-
 	$("#sideMenu a").click(menuselect);
 	$('#newKeymap').click(newKeymap);
 
-	$("#cpKF").change(copyChangeForm);
-	$("#cpKT").change(copyChangeForm);
-	$("#cpLF").change(function(){if ($("#cpLF").val()=="all"){$("#cpLT").val("all")}else if ($("#cpLT").val()=="all"){$("#cpLT").val("0")};copyChangeForm();}); // If layer is All, destiny should be all
-	$("#cpLT").change(function(){if ($("#cpLT").val()=="all"){$("#cpLF").val("all")}else if ($("#cpLF").val()=="all"){$("#cpLF").val("0")};copyChangeForm();});
-	$("#cpSF").change(function(){$("#cpST").val($("#cpSF").val());copyChangeForm();}); // We need to match sides (Left-left, right-right, both-both
-	$("#cpST").change(function(){$("#cpSF").val($("#cpST").val());copyChangeForm();});
-	$("#cpCopy").click(copyLayerForm);
-	$("#clClear").click(clearLayerForm);
-	$('#clKeymap').change(clearCheck);
 	$("input[type='radio'").change(changeLayer);
-
-	$('#threeimg').click(showMenu);
+	$('#options').click(showOptions);
+	$('#kmName').change(kmNewName);
 	$('#kmName').on('input', function(){$(this).css("width", Math.ceil($(this).textWidth())+18)});
+	$('#kmAbbr').change(kmNewAbbr);
 	$('#kmAbbr').on('input', function() {
 		var s=$(this)[0].selectionStart;
 		var e=$(this)[0].selectionEnd;
@@ -40,10 +27,8 @@ $( document ).ready(function() {
 		$(this)[0].setSelectionRange(s,e);
 		$(this).css("width", $(this).textWidth()+10);
 	});
-	$('#kmName').change(kmNewName);
-	$('#kmAbbr').change(kmNewAbbr);
 
-	function showError(text) {
+	function showError(text) { // Unused
 		$("#txtError").html(text);
 		$("#divError").show().delay(1500).hide(0);
 	}
@@ -52,20 +37,16 @@ $( document ).ready(function() {
 		if ($(this).hasClass("sidetitle"))
 			return;
 		view = $(this).attr("data-menu");
-		if (jsondata === undefined && view != "divConfig" && view != "divAbout") {
-			showError("This function is unavailable<br>Load a configuration file")
-		} else {
-			$(".element").addClass("hide");
-			$('.sideselected').removeClass('sideselected');
-			$(this).addClass('sideselected');
-			$("#" + view).removeClass("hide");
-			//if (view != "keymap" && view != "macro")
-			if (view == "divKeymap") {
-				$('#layer0').prop('checked', true);
-				changeKeymap($(this).attr("data-index"));
-			} else if (view == "divMacro") {
-				viewMacro($(this).attr("data-index"));
-			}
+
+		$(".element").addClass("hide");
+		$('.sideselected').removeClass('sideselected');
+		$(this).addClass('sideselected');
+		$("#" + view).removeClass("hide");
+		if (view == "divKeymap") {
+			$('#layer0').prop('checked', true);
+			changeKeymap($(this).attr("data-index"));
+		} else if (view == "divMacro") {
+			viewMacro($(this).attr("data-index"));
 		}
 	}
 
@@ -77,106 +58,26 @@ $( document ).ready(function() {
 	/*	CREATE NEW KEYMAP				*/
 	/************************************/
 
-	function nkNameCheck() {
-		// Check name while you write
-		name = $("#nkName").val();
-		abbr = $("#nkAbbr").val();
-		if (checkNameForm(name)) {
-			$("#nkNameError").hide();
-			$("#nkCreate").prop('disabled', (!checkAbbrForm(abbr) || name.length == 0 || abbr.length == 0));
-		} else {
-			$("#nkNameError").show();
-			$("#nkCreate").prop('disabled', true);
-		}
+	function newKeymap() {
+		createKeymap(getName("New keymap"), getAbbr("NEW"));
 	}
 
-	function nkAbbrCheck() {
-		// Check abbreviation while you write
-		name = $("#nkName").val();
-		abbr = $("#nkAbbr").val();
-		if (checkAbbrForm(abbr)) {
-			$("#nkAbbrError").hide();
-			$("#nkCreate").prop('disabled', (!checkNameForm(name) || name.length == 0 || abbr.length == 0));
-		} else {
-			$("#nkAbbrError").show();
-			$("#nkCreate").prop('disabled', true);
-		}
-	}
-
-	function nkNameChange() {
-		// If abbreviation is empty, get it from the name (first 3 letters)
-		kname = $("#nkName");
-		kabbr = $("#nkAbbr");
-		count = 2;
-		if (kname.val().length > 0) {
-			if (kabbr.val().length == 0) {
-				kabbr.val(kname.val().slice(0, 3).toUpperCase());
-				count = 2;
-				while ((count < 10) && (!checkAbbrForm(kabbr.val()))) {
-					kabbr.val(kabbr.val().slice(0, 2) + String(count++));
-				}
-			}
-		}
-		nkNameCheck();
-	}
-
-	function nkCreate() {
+	function createKeymap(aname, abbr) {
 		// Create a new blank keymap
 		let layer = [{modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}];
 		for (i=0; i<layer.length; i++)
 			for (j=0; j<2; j++)
 				for (k=0; k<35; k++)
 					layer[i].modules[j].keyActions.push(null);
-		let keymap = {isDefault: false, abbreviation: $("#nkAbbr").val(), name: $("#nkName").val(), description: $("#nkDesc").val(), layers: layer};
+		let keymap = {isDefault: false, abbreviation: abbr, name: aname, description: "", layers: layer};
 		let index = 0
-		let capsname = $("#nkName").val().toUpperCase();
+		let capsname = aname.toUpperCase();
 		while (index < jsondata.keymaps.length && jsondata.keymaps[index].name.toUpperCase() < capsname) {
 			index++;
 		}
 		jsondata.keymaps.splice(index, 0, keymap);
-		let source = $("#nkSource").val();
-		if (source != "blank") {
-			if (source >= index)
-				source++;
-			for (i=0; i<4; i++)
-				for (j=0; j<2; j++)
-					jsondata.keymaps[index].layers[i].modules[j] = jsondata.keymaps[source].layers[i].modules[j];
-		}
 		loadKeymaps();
-		$("#nkInfo").show().delay(2000).hide(0);
-		$("#nkName").val("");
-		$("#nkAbbr").val("");
-		$("#nkDesc").val("");
-		$("#nkCreate").attr("disabled", true);
-	}
-
-	function checkNameForm(name) {
-		// Check if name is not used
-		// Returns True if available
-		name = name.toUpperCase();
-		for (i=0; i<jsondata.keymaps.length; i++)
-			if (jsondata.keymaps[i].name.toUpperCase() == name)
-				return false;
-		return true;
-	}
-
-	function checkAbbrForm(name) {
-		// Check if abbreviation is not used
-		// Returns True if available
-		name = name.toUpperCase();
-		for (i=0; i<jsondata.keymaps.length; i++)
-			if (jsondata.keymaps[i].abbreviation.toUpperCase() == name)
-				return false;
-		return true;
-	}
-
-	function newKeymap() {
-		var name = "New keymap";
-		var abbr = "NEW";
-		name = getName(name);
-		abbr = getAbbr(abbr);
-		createKeymap(name, abbr);
-
+		$('.sidenav a:nth-child('+(+3+index+1)+')').addClass("glow");
 	}
 
 	function getName(name) {
@@ -197,8 +98,7 @@ $( document ).ready(function() {
 	}
 
 	function getAbbr(name, digits=0) {
-		// Check if abbreviation is not used
-		// Returns True if available
+		// Get a valid (not used) abbreviation
 		var newname = name.toUpperCase();
 		for (i=0; i<jsondata.keymaps.length; i++)
 			if (jsondata.keymaps[i].abbreviation.toUpperCase() == newname) {
@@ -212,26 +112,10 @@ $( document ).ready(function() {
 		return name;
 	}
 
-	function createKeymap(aname, abbr) {
-		// Create a new blank keymap
-		let layer = [{modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}];
-		for (i=0; i<layer.length; i++)
-			for (j=0; j<2; j++)
-				for (k=0; k<35; k++)
-					layer[i].modules[j].keyActions.push(null);
-		let keymap = {isDefault: false, abbreviation: abbr, name: aname, description: "", layers: layer};
-		let index = 0
-		let capsname = aname.toUpperCase();
-		while (index < jsondata.keymaps.length && jsondata.keymaps[index].name.toUpperCase() < capsname) {
-			index++;
-		}
-		jsondata.keymaps.splice(index, 0, keymap);
-		loadKeymaps();
-		$('.sidenav a:nth-child('+(+3+index+1)+')').addClass("glow");
-		//$('.sidenav a:nth-child('+(+6+index+1)+')').css("background-color", '#FF5');
-	}
-
 	function kmNewName() {
+		// Place keymap on the correct position (alphabetically).
+		// Sets correct width for name field
+
 		var old = jsondata.keymaps[$('.sideselected').attr("data-index")].name;
 		if (old == $('#kmName').val())
 			return;
@@ -239,7 +123,7 @@ $( document ).ready(function() {
 			$('#kmName').val(old).css("width", Math.ceil($('#kmName').textWidth())+18);
 		else {
 			$('#kmName').val(getName($('#kmName').val())).css("width", Math.ceil($('#kmName').textWidth())+18);
-		
+
 			// Now, we have to sort the keymap into the correct position
 			old = parseInt($('.sideselected').attr("data-index"));
 			let index = 0
@@ -259,8 +143,9 @@ $( document ).ready(function() {
 			$('.sidenav a:nth-child('+(+3+index+1)+')').addClass("sideselected");
 		}
 	}
-	
+
 	function kmNewAbbr() {
+		// Sets correct width for abbreviation field
 		var old = jsondata.keymaps[$('.sideselected').attr("data-index")].abbreviation
 		if (old == $('#kmAbbr').val())
 			return;
@@ -276,57 +161,15 @@ $( document ).ready(function() {
 
 
 	/************************************/
-	/*	Copy layers						*/
+	/*	Copy/Paste layers				*/
 	/************************************/
-
-	function checkCopyForm() {
-		if ($('#cpKF').val() === null || $('#cpLF').val() === null || $('#cpKT').val() === null || $('#cpLT').val() === null)
-			return false;
-
-		// Check Layer. All-All or Other-Other
-		if (!((($('#cpLF').val() == "all") && ($('#cpLT').val() == "all")) || (($('#cpLF').val() != "all") && ($('#cpLT').val() != "all"))))
-			return false;
-
-		// Check sides
-		if ($('#cpSF').val() != $('#cpST').val())
-			return false;
-
-		if ($('#cpLF').val() != "all")
-				return (!($('#cpLF').val() == $('#cpLT').val() && $('#cpKF').val() == $('#cpKT').val()));
-		else
-			return ($('#cpKF').val() != $('#cpKT').val());
-	}
-
-	function copyChangeForm() {
-		$('#cpCopy').attr("disabled", !checkCopyForm());
-	}
-
-	function copyLayerForm() {
-		if (checkCopyForm()) {
-			if ($('#cpLT').val() == "all") {
-				for (i=0; i< 4; i++) {
-				copyLayer($('#cpKF').val(), i, $('#cpSF').val(), $('#cpKT').val(), i);
-				}
-			} else {
-				copyLayer($('#cpKF').val(), $('#cpLF').val(), $('#cpSF').val(), $('#cpKT').val(), $('#cpLT').val());
-			}
-			$("#cpInfo").show().delay(2000).hide(0);
-		}
-	}
-
-	function copyLayer(sourceKeymap, sourceLayer, side, destKeymap, destLayer) {
-		if (side != 1)
-			jsondata.keymaps[destKeymap].layers[destLayer].modules[0] = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[0];
-		if (side != 0)
-			jsondata.keymaps[destKeymap].layers[destLayer].modules[1] = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[1];
-	}
 
 	function keyCopy() {
 		$('#'+$(this).parent().attr("data-side")+'Keymap').val($(".sideselected").attr("data-index"));
 		$('#'+$(this).parent().attr("data-side")+'Layer').val($("input[name='layer']:checked").val());
-		hideMenu();
+		hideOptions();
 	}
-	
+
 	function keyPaste() {
 		if (($('#'+$(this).parent().attr("data-side")+'Keymap').val() == "") || ($('#'+$(this).parent().attr("data-side")+'Layer').val() == "")) {
 			// showError("Copy first, then paste");
@@ -341,15 +184,16 @@ $( document ).ready(function() {
 			copyLayer($('#'+$(this).parent().attr("data-side")+'Keymap').val(), $('#'+$(this).parent().attr("data-side")+'Layer').val(), side, dkeymap, dlayer);
 			viewKeymap(dkeymap, dlayer);
 		}
-		hideMenu();
+		hideOptions();
 	}
-	
-	function keyClear() {
-		// confirm question
-		clearLayer($(".sideselected").attr("data-index"), $("input[name='layer']:checked").val(), ($(this).parent().attr("data-side") == "left" ? 1 : $(this).parent().attr("data-side") == "right" ? 0 : "Both"));
-		viewKeymap($(".sideselected").attr("data-index"), $("input[name='layer']:checked").val());
-		hideMenu();
+
+	function copyLayer(sourceKeymap, sourceLayer, side, destKeymap, destLayer) {
+		if (side != 1)
+			jsondata.keymaps[destKeymap].layers[destLayer].modules[0] = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[0];
+		if (side != 0)
+			jsondata.keymaps[destKeymap].layers[destLayer].modules[1] = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[1];
 	}
+
 	/************************************/
 
 
@@ -358,11 +202,13 @@ $( document ).ready(function() {
 	/*	Clear layers					*/
 	/************************************/
 
-	function clearLayerForm() {
-		clearLayer($('#clKeymap').val(), $('#clLayer').val(), $('#clSide').val());
-		$("#clInfo").show().delay(2000).hide(0);
+	function keyClear() {
+		// confirm question
+		clearLayer($(".sideselected").attr("data-index"), $("input[name='layer']:checked").val(), ($(this).parent().attr("data-side") == "left" ? 1 : $(this).parent().attr("data-side") == "right" ? 0 : "Both"));
+		viewKeymap($(".sideselected").attr("data-index"), $("input[name='layer']:checked").val());
+		hideOptions();
 	}
-	
+
 	function clearLayer(keymap, layer, side) {
 		for (i=0; i<36; i++) {
 			if (side != 1)
@@ -370,10 +216,6 @@ $( document ).ready(function() {
 			if (side != 0)
 				jsondata.keymaps[keymap].layers[layer].modules[1].keyActions[i] = null;
 		}
-	}
-
-	function clearCheck() {
-		$('#clClear').attr('disabled', ($('#clKeymap').val() == null));
 	}
 
 	/************************************/
@@ -431,61 +273,41 @@ $( document ).ready(function() {
 	/*	Keymaps							*/
 	/************************************/
 
-	/* Load keymaps on side menu and select dropdowns. */
 	function loadKeymaps() {
+		// Load keymaps on side menu
 		$("#sideMenu a").off(); // Remove menu listeners
 		while ($('#mk').next().attr('id') != "mm") // Remove all keyboard from menu
 			$('#mk').next().remove();
-		
-		 // Remove keyboards from selects
-		for (i=0; i<$('#cpKF').children().length; i++) {
-			$('#cpKF').children().remove();
-			$('#cpKT').children().remove();
-			$('#clKeymap').children().remove();
-			$('#nkSource').children().remove();
-		}
 
-
-		// Create first options
-		$("#cpKT").append('<option disabled selected value></option>');
-		$("#cpKF").append('<option disabled selected value></option>');
-		$("#clKeymap").append('<option disabled selected value></option>');
-		$("#nkSource").append('<option value="blank"><< Blank keymap >></option>');
-
-		// Insert keyboard list on selects
 		items = "";
 		for (i=0; i<jsondata.keymaps.length; i++) {
 			items += "<a href=\"#\" data-menu=\"divKeymap\" data-index=\"" + i + "\">" + jsondata.keymaps[i].name + ((jsondata.keymaps[i].isDefault == true) ? " * " : "") + "</a>";
-			$("#cpKT").append('<option value="' + i + '">' + jsondata.keymaps[i].name + '</option>');
-			$("#cpKF").append('<option value="' + i + '">' + jsondata.keymaps[i].name + '</option>');
-			$("#clKeymap").append('<option value="' + i + '">' + jsondata.keymaps[i].name + '</option>');
-			$("#nkSource").append('<option value="' + i + '">' + jsondata.keymaps[i].name + '</option>');
 		}
 		$('#mk').after(items);
 		$("#sideMenu a").click(menuselect); // Create menu listeners
 	}
 
 	function changeKeymap(keymap) {
-		//$('#keymapTitle').text(jsondata.keymaps[keymap].name + " (" + jsondata.keymaps[keymap].abbreviation + ")");
+		// Display selected keymap from sidemenu
 		$('#kmName').val(jsondata.keymaps[keymap].name);
 		$('#kmName').css("width", Math.ceil($('#kmName').textWidth())+18);
 		$('#kmAbbr').val(jsondata.keymaps[keymap].abbreviation);
 		$('#kmAbbr').css("width", $('#kmAbbr').textWidth()+10);
-		viewKeymap(keymap, 0);
+		viewKeymap(keymap);
 	}
 
 	function changeLayer() {
 		viewKeymap($(".sideselected").attr("data-index"), $(this).val());
 	}
 
-	function viewKeymap(keymap, layer) {
-		for (i=0; i<35; i++) {
-			$('#lKey'+i).text("");
-			$('#rKey'+i).text("");
-		}
+	function viewKeymap(keymap, layer=0) {
+		// Fill keyboard with the correct keymap and layer
+
 		for (i=0; i<35; i++) {
 			key = jsondata.keymaps[keymap].layers[layer].modules[0].keyActions[i];
-			if (key !== null)
+			if (key == null)
+				$('#rKey'+i).text("");
+			else
 				if (key.scancode) {
 					$('#rKey'+i).text(scancode[key.scancode]);
 					if (key.modifierMask) {
@@ -506,11 +328,15 @@ $( document ).ready(function() {
 					$('#rKey'+i).text(key.mouseAction);
 				else if (key.keyActionType == "playMacro")
 					$('#rKey'+i).text(jsondata.macros[key.macroIndex].name);
+				else if (key.keyActionType == "none")
+					$('#rKey'+i).text("");
 				else
 					$('#rKey'+i).text("?");
 
 			key = jsondata.keymaps[keymap].layers[layer].modules[1].keyActions[i];
-			if (key !== null)
+			if (key == null)
+				$('#lKey'+i).text("");
+			else
 				if (key.scancode) {
 					$('#lKey'+i).text(scancode[key.scancode]);
 					if (key.modifierMask) {
@@ -525,18 +351,20 @@ $( document ).ready(function() {
 					$('#lKey'+i).text(key.layer);
 				else if (key.keymapAbbreviation)
 					$('#lKey'+i).text(key.keymapAbbreviation);
-				else if (key.mouseAction)
+				else if (key.keyActionType == "mouse")
 					$('#lKey'+i).text(key.mouseAction);
 				else if (key.keyActionType == "playMacro")
 					$('#lKey'+i).text(jsondata.macros[key.macroIndex].name);
+				else if (key.keyActionType == "none")
+					$('#lKey'+i).text("");
 				else
 					$('#lKey'+i).text("?");
 		}
 	}
 
-	function showMenu() {
+	function showOptions() {
 		var screen = $('<div id="lockScreen"/>');
-		screen.click(hideMenu);
+		screen.click(hideOptions);
 
 		var copy = $('<div/>')
 			.addClass("copy")
@@ -559,62 +387,72 @@ $( document ).ready(function() {
 				.css('width', '100%')
 			);
 
-		var menuL = $('<div id="keyMenu"/>').addClass("keymenu");
+		var menuL = $('<div id="keyDivOptions"/>');
 		menuL.css("left", '565px');
 		menuL.attr("data-side", "left");
-		menuL.append(clear.clone());
-		menuL.append(copy.clone());
-		menuL.append(paste.clone());
+
+		let item = clear.clone();
+		item.addClass("iconleft");
+		menuL.append(item);
+
+		item = copy.clone();
+		item.addClass("iconright");
+		menuL.append(item);
+
+		item = paste.clone();
+		item.addClass("iconright");
+		menuL.append(item);
+
 		menuL.click(function(e){e.stopPropagation();});
-		menuL.hover(glow, noGlow);
+		menuL.hover(glowMenuItem, noGlowMenuItem);
 		menuL.appendTo(screen);
 
-		/*var menuB = $('<div id="keyMenu"/>').addClass("keymenu");
-		menuB.css("left", '815px');
-		menuB.attr("data-side", "both");
-		menuB.append(clear.clone());
-		menuB.append(copy.clone());
-		menuB.append(paste.clone());
-		menuB.click(function(e){e.stopPropagation();});
-		menuB.hover(glow, noGlow);
-		menuB.appendTo(screen);*/
-
-		var menuR = $('<div id="keyMenu"/>').addClass("keymenu");
+		var menuR = $('<div id="keyDivOptions"/>');
 		menuR.css("left", '1065px');
 		menuR.attr("data-side", "right");
-		menuR.append(clear.clone());
-		menuR.append(copy);
-		menuR.append(paste);
+
+		item = clear.clone();
+		item.addClass("iconright");
+		menuR.append(item);
+
+		item = copy.clone();
+		item.addClass("iconleft");
+		menuR.append(item);
+
+		item = paste.clone();
+		item.addClass("iconleft");
+		menuR.append(item);
+
 		menuR.click(function(e){e.stopPropagation();});
-		menuR.hover(glow, noGlow);
+		menuR.hover(glowMenuItem, noGlowMenuItem);
 		menuR.appendTo(screen);
 
 		$("body").append(screen);
-		
+
 		$('.clear').click(keyClear);
 		$('.copy').click(keyCopy);
 		$('.paste').click(keyPaste);
 	}
 
-	function hideMenu() {
+	function hideOptions() {
 		$('.copy').off();
 		$('.paste').off();
 		$('#lockScreen').remove();
-		noGlow();
+		noGlowMenuItem();
 	}
-	
-	function glow() {
-		$('#keyGlow').removeClass("hide");
+
+	function glowMenuItem() {
+		$('#keyboardGlow').removeClass("hide");
 		if ($(this).attr("data-side") == "left")
-			$('#keyGlow').css("background", "linear-gradient(90deg, #FFF2 0%,#FFF2 46%,#000A 52%,#000A 100%)");
+			$('#keyboardGlow').css("background", "linear-gradient(90deg, #FFF2 0%,#FFF2 46%,#000A 52%,#000A 100%)");
 		else if ($(this).attr("data-side") == "right")
-			$('#keyGlow').css("background", "linear-gradient(90deg, #000A 0%,#000A 44%,#FFF2 50%,#FFF2 100%)");
+			$('#keyboardGlow').css("background", "linear-gradient(90deg, #000A 0%,#000A 44%,#FFF2 50%,#FFF2 100%)");
 		else
-			$('#keyGlow').css("background", "#FFF2");
+			$('#keyboardGlow').css("background", "#FFF2");
 	}
-	
-	function noGlow() {
-		$('#keyGlow').addClass("hide");
+
+	function noGlowMenuItem() {
+		$('#keyboardGlow').addClass("hide");
 	}
 
 
@@ -625,8 +463,8 @@ $( document ).ready(function() {
 	/************************************/
 	/*	Macros							*/
 	/************************************/
-	
-	
+
+
 	function loadMacros() {
 		$("#sideMenu a").off();
 		while ($('#mm').next().attr('href') !== undefined)
@@ -647,12 +485,10 @@ $( document ).ready(function() {
 			action = jsondata.macros[macro].macroActions[i].macroActionType;
 			if (action == "text") {
 				$('#tmacro').append("<tr><td>Write text</td><td class='macroCommand'>" + KarelSyntax(jsondata.macros[macro].macroActions[i].text) + "</td></tr>");
-				//$('#tmacro').append("<tr><td>Write text</td><td class='macroCommand'>" + (jsondata.macros[macro].macroActions[i].text) + "</td></tr>");
 			} else if (action == "key") {
 				action = capitalize(jsondata.macros[macro].macroActions[i].action) + " key";
 				value = "";
 				if (jsondata.macros[macro].macroActions[i].modifierMask) {
-					//value += modifier[jsondata.macros[macro].macroActions[i].modifierMask] + " + ";
 					modifier.forEach(function(item, index){if (index & jsondata.macros[macro].macroActions[i].modifierMask) value += item + " + ";});
 				}
 				if (jsondata.macros[macro].macroActions[i].scancode)

@@ -9,7 +9,7 @@ You can try it online [here](https://izk666.github.io/UHK-Viewer/), or dowload a
 ## Tools
 
 - Create new blank keymaps
-- Copy/Paste/Clear layers (Left side and right side separeately)
+- Copy/Paste/Clear layers (Left side and right side separately)
 - Rename keymaps
 
 ## Extras

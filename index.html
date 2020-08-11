@@ -11,10 +11,6 @@
 		<div id="sideMenu" class="sidenav">
 			<a class="sidetitle">Tools</a>
 			<a href="#" data-menu="divConfig" class="sideselected">Configuration</a>
-			<!--a href="#" data-menu="divNew">Create keymap</a>
-			<a href="#" data-menu="divClear">Clear layers</a>
-			<a href="#" data-menu="divCopy">Copy layers</a>
-			<!--a href="#" data-menu="divAbout">About</a-->
 			<a class="sidetitle" id="mk"><img id="newKeymap" src="new.png" class="hide" style="float:right;position:relative;top:-1px;width:20px;">Keymaps</a>
 			<a class="sidetitle" id="mm">Macros</a>
 		</div>
@@ -30,121 +26,6 @@
 			<br>
 			<h1>Export configuration</h1>
 			<input type="button" id="cfgDown" value="Download..." disabled>
-		</div>
-
-		<div id="divNew" class="element hide">
-			<h1>Create new keymap</h1>
-			<table id="tCreate">
-				<tr>
-					<td style="width:30%;">
-						Name:
-					</td>
-					<td style="width:30%;">
-						<input type="text" id="nkName" style="width:100%;">
-					</td>
-					<td>
-						<span id="nkNameError" class="hide red">Name already in use</span>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Abbreviation:
-					</td>
-					<td>
-						<input type="text" id="nkAbbr" size="3" maxlength="3" onkeyup="var s=this.selectionStart;var e=this.selectionEnd;this.value=this.value.toUpperCase();this.setSelectionRange(s,e);">
-					</td>
-					<td>
-						<span id="nkAbbrError" class="hide red">Abbreviation already in use</span>
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Description (optional):
-					</td>
-					<td colspan="2">
-						<input type="text" id="nkDesc" style="width:100%;">
-					</td>
-				</tr>
-				<tr>
-					<td>
-						Duplicate from:
-					</td>
-					<td colspan="2">
-						<select id="nkSource" style="width:100%;"></select>
-					</td>
-				</tr>
-				<tr>
-					<td colspan="2" style="text-align:center;">
-						<input type="button" id="nkCreate" value="Create new keymap" disabled>
-						<br>
-						<span id="nkInfo" class="hide info">Keymap created succesfully</span>
-					</td>
-					<td>
-					</td>
-				</tr>
-			</table>
-		</div>
-
-		<div id="divClear" class="hide element">
-			<h1>Clear layer:</h1>
-			<select id="clKeymap"></select>
-			<select id="clLayer">
-				<option value="0" selected="selected">Base</option>
-				<option value="1">Mod</option>
-				<option value="2">Fn</option>
-				<option value="3">Mouse</option>
-			</select>
-			<select id="clSide">
-				<option value="both">Both sides</option>
-				<option value="1">Left side</option>
-				<option value="0">Right side</option>
-			</select>
-			<br><br><br>
-			<br><br><br>
-			<input type="button" id="clClear" value="Clear" disabled>
-			<br>
-			<span id="clInfo" class="hide info">Layer cleared succesfully</span>
-		</div>
-
-		<div id="divError" class="error hide">
-			<p id="txtError"></p>
-		</div>
-
-		<div id="divCopy" class="hide element">
-			<h1>Copy from:</h1>
-			<select id="cpKF"></select>
-			<select id="cpLF">
-				<option value="all">All</option>
-				<option value="0" selected>Base</option>
-				<option value="1">Mod</option>
-				<option value="2">Fn</option>
-				<option value="3">Mouse</option>
-			</select>
-			<select id="cpSF">
-				<option value="both" selected>Both sides</option>
-				<option value="1">Left side</option>
-				<option value="0">Right side</option>
-			</select>
-			<br><br><br>
-			<h1>Paste to:</h1>
-			<select id="cpKT"></select>
-			<select id="cpLT">
-				<option value="all">All</option>
-				<option value="0" selected>Base</option>
-				<option value="1">Mod</option>
-				<option value="2">Fn</option>
-				<option value="3">Mouse</option>
-			</select>
-			<select id="cpST">
-				<option value="both" selected>Both sides</option>
-				<option value="1">Left side</option>
-				<option value="0">Right side</option>
-			</select>
-			<br><br><br>
-			<br><br><br>
-			<input type="button" id="cpCopy" value="Copy" disabled>
-			<br>
-			<span id="cpInfo" class="hide info">Layer copied succesfully</span>
 		</div>
 
 		<div id="divError" class="error hide">
@@ -246,7 +127,7 @@
 				<div id="rKey30" class="key kmod"></div>
 			</div>
 			<div class="threedots">
-				<img id="threeimg" src="dots.png">
+				<img id="options" src="dots.png">
 				<input type="text" id="leftKeymap" class="hide"><input type="text" id="leftLayer" class="hide">
 				<input type="text" id="bothKeymap" class="hide"><input type="text" id="bothLayer" class="hide">
 				<input type="text" id="rightKeymap" class="hide"><input type="text" id="rightLayer" class="hide">
@@ -273,12 +154,7 @@
 			</table>
 		</div>
 
-		<div id="divAbout" class="hide element">
-			<h1>UHK Viewer</h1>
-			<p>Create new layers easily</p>
-		</div>
-
-		<div id="keyGlow" class="hide element">
+		<div id="keyboardGlow" class="hide element">
 		</div>
 
 	</body>
