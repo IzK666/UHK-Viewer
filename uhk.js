@@ -6,7 +6,7 @@ $.fn.textWidth = function(text, font) {
 };
 
 var jsondata;
-
+var modules = true; // Enables/disables modules
 
 $( document ).ready(function() {
 	$("#cfgUp").change(uploadFile);
@@ -64,11 +64,22 @@ $( document ).ready(function() {
 
 	function createKeymap(aname, abbr) {
 		// Create a new blank keymap
-		let layer = [{modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}];
+		let layer;
+		if (modules)
+			layer = [{modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}, {id: 4, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}, {id: 4, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}, {id: 4, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}, {id: 4, keyActions: []}]}];
+		else
+			layer = [{modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}];
 		for (i=0; i<layer.length; i++)
 			for (j=0; j<2; j++)
 				for (k=0; k<35; k++)
 					layer[i].modules[j].keyActions.push(null);
+		if (modules)
+			for (i=0; i<layer.length; i++) {
+				for (k=0; k<6; k++)
+						layer[i].modules[2].keyActions.push(null);
+				for (k=0; k<2; k++)
+						layer[i].modules[3].keyActions.push(null);
+			}
 		let keymap = {isDefault: false, abbreviation: abbr, name: aname, description: "", layers: layer};
 		let index = 0
 		let capsname = aname.toUpperCase();
@@ -188,10 +199,16 @@ $( document ).ready(function() {
 	}
 
 	function copyLayer(sourceKeymap, sourceLayer, side, destKeymap, destLayer) {
-		if (side != 1)
+		if (side != 1) {
 			jsondata.keymaps[destKeymap].layers[destLayer].modules[0] = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[0];
-		if (side != 0)
+			if (modules)
+				jsondata.keymaps[destKeymap].layers[destLayer].modules[3] = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[3];
+		}
+		if (side != 0) {
 			jsondata.keymaps[destKeymap].layers[destLayer].modules[1] = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[1];
+			if (modules)
+				jsondata.keymaps[destKeymap].layers[destLayer].modules[2] = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[2];
+		}
 	}
 
 	/************************************/
@@ -253,6 +270,7 @@ $( document ).ready(function() {
 			jsondata = JSON.parse(content);
 			loadKeymaps();
 			loadMacros();
+			modules = (jsondata.keymaps[0].layers[0].modules.length == 4) ? true : false;
 		}).catch(error => console.log(error));
 	}
 
