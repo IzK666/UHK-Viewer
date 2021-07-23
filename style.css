@@ -1,3 +1,8 @@
+@font-face {
+font-family: "Digital";
+src: url("digital-7.ttf");
+}
+
 /* ******************** */
 /*	Sidemenu			*/
 /* ******************** */
@@ -360,18 +365,33 @@ table {
 	position:						absolute;
 	width:							99%;
 	height:							99%;
-	background:						#0003;
+	background:						#F000;
 }
 
-#keyDivOptions {
-	top:							290px;
+#keyDivOptionsL, #keyDivOptionsR {
+	top:							620px;
 	height:							auto;
 	width:							100px;
-	position:						fixed;
+	position:						absolute;
 	padding:						10px;
 	border:							3px white solid;
 	border-radius:					10px;
 	background:						#333;
+	z-index:						5;
+	font-family:					"Digital";
+	text-align:						center;
+	color:							#ccc;
+}
+
+#cliprightK, #clipleftK {
+	font-size:						30px;
+	color:							#eee;
+}
+
+#cliprightL, #clipleftL {
+	color:							#ccc;
+	font-size:						20px;
+	margin-left:					5px;
 }
 
 #keyboardGlow {

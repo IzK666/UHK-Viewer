@@ -16,7 +16,12 @@ $( document ).ready(function() {
 	$('#newKeymap').click(newKeymap);
 
 	$("input[type='radio'").change(changeLayer);
-	$('#options').click(showOptions);
+	$("#keyDivOptionsL").hover(glowKeySide, noglowKeySide);
+	$("#keyDivOptionsR").hover(glowKeySide, noglowKeySide);
+	$('.clear').click(keyClear);
+	$('.copy').click(keyCopy);
+	$('.paste').click(keyPaste);
+
 	$('#kmName').change(kmNewName);
 	$('#kmName').on('input', function(){$(this).css("width", Math.ceil($(this).textWidth())+18)});
 	$('#kmAbbr').change(kmNewAbbr);
@@ -164,6 +169,7 @@ $( document ).ready(function() {
 			$('#kmAbbr').val(old).css("width", $('#kmAbbr').textWidth()+10);
 		else
 			$('#kmAbbr').val(getAbbr($('#kmAbbr').val())).css("width", $('#kmAbbr').textWidth()+10);
+		jsondata.keymaps[$('.sideselected').attr("data-index")].abbreviation = $('#kmAbbr').val();
 	}
 
 
@@ -176,26 +182,29 @@ $( document ).ready(function() {
 	/************************************/
 
 	function keyCopy() {
-		$('#'+$(this).parent().attr("data-side")+'Keymap').val($(".sideselected").attr("data-index"));
-		$('#'+$(this).parent().attr("data-side")+'Layer').val($("input[name='layer']:checked").val());
-		hideOptions();
+		$('#copy'+$(this).parent().attr("data-side")+'Keymap').val($(".sideselected").attr("data-index"));
+		$('#copy'+$(this).parent().attr("data-side")+'Layer').val($("input[name='layer']:checked").val());
+
+		var layers = ["Base","Mod","Fn","Mouse"];
+		$("#clip"+$(this).parent().attr("data-side")+"K").text(jsondata.keymaps[$(".sideselected").attr("data-index")].abbreviation);
+		$("#clip"+$(this).parent().attr("data-side")+"L").text(layers[$("input[name='layer']:checked").val()]);
 	}
 
 	function keyPaste() {
-		if (($('#'+$(this).parent().attr("data-side")+'Keymap').val() == "") || ($('#'+$(this).parent().attr("data-side")+'Layer').val() == "")) {
+		if (($('#copy'+$(this).parent().attr("data-side")+'Keymap').val() == "") || ($('#copy'+$(this).parent().attr("data-side")+'Layer').val() == "")) {
 			// showError("Copy first, then paste");
 			return false;
 		}
 		var dkeymap = $(".sideselected").attr("data-index");
 		var dlayer = $("input[name='layer']:checked").val();
-		if (($('#'+$(this).parent().attr("data-side")+'Keymap').val() == dkeymap) && ($('#'+$(this).parent().attr("data-side")+'Layer').val() == dlayer)) {
+		if (($('#copy'+$(this).parent().attr("data-side")+'Keymap').val() == dkeymap) && ($('#copy'+$(this).parent().attr("data-side")+'Layer').val() == dlayer)) {
 			console.log("Nothing to copy");
 		} else {
 			var side = ($(this).parent().attr("data-side") == "left" ? 1 : $(this).parent().attr("data-side") == "right" ? 0 : "Both");
-			copyLayer($('#'+$(this).parent().attr("data-side")+'Keymap').val(), $('#'+$(this).parent().attr("data-side")+'Layer').val(), side, dkeymap, dlayer);
+			copyLayer($('#copy'+$(this).parent().attr("data-side")+'Keymap').val(), $('#copy'+$(this).parent().attr("data-side")+'Layer').val(), side, dkeymap, dlayer);
 			viewKeymap(dkeymap, dlayer);
 		}
-		hideOptions();
+		//hideOptions();
 	}
 
 	function copyLayer(sourceKeymap, sourceLayer, side, destKeymap, destLayer) {
@@ -223,7 +232,7 @@ $( document ).ready(function() {
 		// confirm question
 		clearLayer($(".sideselected").attr("data-index"), $("input[name='layer']:checked").val(), ($(this).parent().attr("data-side") == "left" ? 1 : $(this).parent().attr("data-side") == "right" ? 0 : "Both"));
 		viewKeymap($(".sideselected").attr("data-index"), $("input[name='layer']:checked").val());
-		hideOptions();
+		//hideOptions();
 	}
 
 	function clearLayer(keymap, layer, side) {
@@ -303,6 +312,16 @@ $( document ).ready(function() {
 		}
 		$('#mk').after(items);
 		$("#sideMenu a").click(menuselect); // Create menu listeners
+
+		// Clean old status
+		$("#clipleftK").text("");
+		$("#clipleftL").text("");
+		$("#cliprightK").text("");
+		$("#cliprightL").text("");
+		$("#copyleftKeymap").val("");
+		$("#copyleftLayer").val("");
+		$("#copyrightKeymap").val("");
+		$("#copyrightLayer").val("");
 	}
 
 	function changeKeymap(keymap) {
@@ -380,9 +399,10 @@ $( document ).ready(function() {
 		}
 	}
 
-	function showOptions() {
+	/*function showOptions() {
 		var screen = $('<div id="lockScreen"/>');
 		screen.click(hideOptions);
+		//var screen = $('#divKeymap');
 
 		var copy = $('<div/>')
 			.addClass("copy")
@@ -422,7 +442,7 @@ $( document ).ready(function() {
 		menuL.append(item);
 
 		menuL.click(function(e){e.stopPropagation();});
-		menuL.hover(glowMenuItem, noGlowMenuItem);
+		menuL.hover(glowKeySide, noglowKeySide);
 		menuL.appendTo(screen);
 
 		var menuR = $('<div id="keyDivOptions"/>');
@@ -442,7 +462,7 @@ $( document ).ready(function() {
 		menuR.append(item);
 
 		menuR.click(function(e){e.stopPropagation();});
-		menuR.hover(glowMenuItem, noGlowMenuItem);
+		menuR.hover(glowKeySide, noglowKeySide);
 		menuR.appendTo(screen);
 
 		$("body").append(screen);
@@ -456,10 +476,10 @@ $( document ).ready(function() {
 		$('.copy').off();
 		$('.paste').off();
 		$('#lockScreen').remove();
-		noGlowMenuItem();
-	}
+		noglowKeySide();
+	}*/
 
-	function glowMenuItem() {
+	function glowKeySide() {
 		$('#keyboardGlow').removeClass("hide");
 		if ($(this).attr("data-side") == "left")
 			$('#keyboardGlow').css("background", "linear-gradient(90deg, #FFF2 0%,#FFF2 46%,#000A 52%,#000A 100%)");
@@ -469,7 +489,7 @@ $( document ).ready(function() {
 			$('#keyboardGlow').css("background", "#FFF2");
 	}
 
-	function noGlowMenuItem() {
+	function noglowKeySide() {
 		$('#keyboardGlow').addClass("hide");
 	}
 
