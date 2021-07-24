@@ -15,6 +15,9 @@ $( document ).ready(function() {
 	$("#sideMenu a").click(menuselect);
 	$('#newKeymap').click(newKeymap);
 
+	$('#keymapCopy').click(keymapCopy);
+	$('#keymapRemove').click(keymapRemove);
+
 	$("input[type='radio'").change(changeLayer);
 	$("#keyDivOptionsL").hover(glowKeySide, noglowKeySide);
 	$("#keyDivOptionsR").hover(glowKeySide, noglowKeySide);
@@ -93,7 +96,7 @@ $( document ).ready(function() {
 		}
 		jsondata.keymaps.splice(index, 0, keymap);
 		loadKeymaps();
-		$('.sidenav a:nth-child('+(+3+index+1)+')').addClass("glow");
+		$('.sidenav a:nth-child('+(3+index+1)+')').addClass("glow");
 	}
 
 	function getName(name) {
@@ -156,7 +159,7 @@ $( document ).ready(function() {
 			if (index > old)
 				index--;
 			loadKeymaps();
-			$('.sidenav a:nth-child('+(+3+index+1)+')').addClass("sideselected");
+			$('.sidenav a:nth-child('+(3+index+1)+')').addClass("sideselected");
 		}
 	}
 
@@ -181,11 +184,41 @@ $( document ).ready(function() {
 	/*	Copy/Paste layers				*/
 	/************************************/
 
+	function keymapCopy() {
+		var keymapsourceid=$(".sideselected").attr("data-index");
+		keymapName = getName(jsondata.keymaps[keymapsourceid].name);
+		keymapAbbr = getAbbr(jsondata.keymaps[keymapsourceid].abbreviation);
+		createKeymap(keymapName, keymapAbbr);
+
+		// Search new keymap
+		var keymapdestid = 0;
+		while (jsondata.keymaps[keymapdestid].name != keymapName && jsondata.keymaps[keymapdestid].abbreviation != keymapAbbr)
+			keymapdestid++;
+
+		// Copy layers
+		for (i=0; i<layers.length; i++) {
+			copyLayer(keymapsourceid, i, 2, keymapdestid, i);
+		}
+
+		$('.sidenav a:nth-child('+(4+keymapdestid)+')').trigger('click');
+
+	}
+
+	function keymapRemove() {
+		if (jsondata.keymaps.length > 1) { // You can't remove last keymap
+			let keymapID = $(".sideselected").attr("data-index");
+			if (jsondata.keymaps[keymapID].isDefault==true)
+				jsondata.keymaps[0].isDefault = true;
+			jsondata.keymaps.splice(keymapID, 1);
+			loadKeymaps();
+			$('.sidenav a:nth-child('+4+')').trigger("click");
+		}
+	}
+
 	function keyCopy() {
 		$('#copy'+$(this).parent().attr("data-side")+'Keymap').val($(".sideselected").attr("data-index"));
 		$('#copy'+$(this).parent().attr("data-side")+'Layer').val($("input[name='layer']:checked").val());
 
-		var layers = ["Base","Mod","Fn","Mouse"];
 		$("#clip"+$(this).parent().attr("data-side")+"K").text(jsondata.keymaps[$(".sideselected").attr("data-index")].abbreviation);
 		$("#clip"+$(this).parent().attr("data-side")+"L").text(layers[$("input[name='layer']:checked").val()]);
 	}

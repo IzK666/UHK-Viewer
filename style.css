@@ -12,6 +12,8 @@ src: url("digital-7.ttf");
 	width:							250px;
 	position:						fixed;
 	overflow-y:						auto;
+	z-index:						10;
+	background-color:				#fff;
 }
 
 .sidenav a {
@@ -268,7 +270,7 @@ table {
 }
 
 .key {
-    background-color:				#333;
+    background-color:				#222;
     color:							#FFF;
     border:							2px solid grey;
     border-radius:					5px;
@@ -281,7 +283,7 @@ table {
 .key:hover {
 	transform:						scale(1.6);
     font-size:						10px;
-	
+    background-color:				#333;
 }
 
 .key5, .nokey {
@@ -336,6 +338,16 @@ table {
 
 #kmAbbr {
 	padding:						0px 5px 0px 5px;
+}
+
+.keymapicons {
+	width:							24px;
+	margin:							24px 10px 0px 10px;
+	float:							right;
+}
+
+.keymapicons:hover {
+	width:							30px;
 }
 
 .note {
