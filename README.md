@@ -23,16 +23,16 @@ You can use it online [here](https://izk666.github.io/UHK-Viewer/), or dowload a
 - Modules don't get cleared.
 
 ## Changelog
-### 26 July 2021
+### v2.11
 - Added: Confirmation for keymap deletion
 - Fixed: Default keymap wasn't assigned correctly after removing the default one
 - UI: Keymap name in red
 - UI: Added some animations to buttons
 
-### 24 July 2021
+### v2.1
 - New: Clone and delete keymaps
 
-### 23 july 2021
+### v2
 - New: File format detection. The web now detects if you upload an old configuration (no modules) or the new one and exports the right format.
 - UI: Copy/Paste/Clear buttons always shown
 - UI: Show clipboard content (abbreviation and layer)
