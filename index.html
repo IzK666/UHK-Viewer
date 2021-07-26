@@ -5,7 +5,7 @@
 		<script src="uhk.js"></script>
 		<link rel="stylesheet" type="text/css" href="style.css">
 		<link rel="icon" type="image/x-icon" href="favicon.ico">
-		<title>UHK Viewer</title>
+		<title>UHK Layer cloning</title>
 	</head>
 	<body>
 		<div id="sideMenu" class="sidenav">
@@ -55,7 +55,7 @@
 				<input type="text" id="copyleftKeymap" class="hide"><input type="text" id="copyleftLayer" class="hide">
 			</div>
 			<div id="keyDivOptionsR" data-side="right" style="left: 820px;">
-				<div class="clear iconright"><img src="remove.png" style="width: 100%;"></div><div class="copy iconleft"><img src="copy.png" style="width: 100%;"></div><div class="paste iconleft"><img src="paste.png" style="width: 100%;"></div><br><span id="cliprightK"></span><span id="cliprightL"></span>
+				<div class="clear iconright"><img src="remove.png" style="width: 100%;"></div><div class="copy iconleft"><img src="copy.png" style="width: 100%;"></div><div class="paste iconleft"><img src="paste.png" style="width: 100%;"></div><br><span id="cliprightL"></span><span id="cliprightK"></span>
 				<input type="text" id="copyrightKeymap" class="hide"><input type="text" id="copyrightLayer" class="hide">
 			</div>
 			<div class="keyboard">
@@ -137,9 +137,10 @@
 				<div id="rKey30" class="key kmod"></div>
 			</div>
 			<div class="note">
-				<p>Note</p>
+				<p>Notes</p>
 				<ul>
 					<li>If you copy from the base layer to a different layer, reassign the not related mod/fn/mouse keys in agent, as they won't work on other layers.</li>
+					<li>Module keys are copy/pasted, but don't get cleared.</li>
 				</ul>
 			</div>
 		</div>

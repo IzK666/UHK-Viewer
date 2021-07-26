@@ -377,7 +377,31 @@ table {
 	position:						absolute;
 	width:							99%;
 	height:							99%;
-	background:						#F000;
+	background:						#0009;
+	z-index:						10;
+}
+
+#box {
+    width:							40%;
+    height:							20%;
+    position:						absolute;
+    left:							500px;
+    top:							30%;
+	background-color:				#EEE;
+	padding:						20px;
+}
+
+#confirmText {
+	font-size:						20px;
+}
+#confirmButtons {
+	position:						absolute;
+	bottom:							20px;
+	left:							25%;
+}
+
+#confirmButtons input {
+	margin:							20px;
 }
 
 #keyDivOptionsL, #keyDivOptionsR {
@@ -397,13 +421,17 @@ table {
 
 #cliprightK, #clipleftK {
 	font-size:						30px;
-	color:							#eee;
+	color:							#d22;
+	float:							left;
+	margin-left:					5px;
 }
 
 #cliprightL, #clipleftL {
 	color:							#ccc;
 	font-size:						20px;
 	margin-left:					5px;
+	float:							right;
+	margin-top:						9px;
 }
 
 #keyboardGlow {
@@ -441,4 +469,20 @@ table {
 
 .iconleft {
 	float:							left;
+}
+
+@keyframes blinking {
+	0% {
+		opacity:					.7;
+	}
+	50% {
+		opacity:					0;
+	}
+	100% {
+		opacity:					.7;
+	}
+}
+
+.blink {
+	animation: blinking 0.5s infinite;
 }

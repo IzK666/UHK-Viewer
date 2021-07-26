@@ -19,11 +19,12 @@ $( document ).ready(function() {
 	$('#keymapRemove').click(keymapRemove);
 
 	$("input[type='radio'").change(changeLayer);
-	$("#keyDivOptionsL").hover(glowKeySide, noglowKeySide);
-	$("#keyDivOptionsR").hover(glowKeySide, noglowKeySide);
-	$('.clear').click(keyClear);
-	$('.copy').click(keyCopy);
-	$('.paste').click(keyPaste);
+	/*$("#keyDivOptionsL").hover(glowKeySide, noglowKeySide);
+	$("#keyDivOptionsR").hover(glowKeySide, noglowKeySide);*/
+
+	$('.clear').click(keyClear).hover(glowKeySide, noglowKeySide);
+	$('.copy').click(keyCopy).hover(glowKeySide, noglowKeySide);
+	$('.paste').click(keyPaste).hover(glowKeySide, noglowKeySide);
 
 	$('#kmName').change(kmNewName);
 	$('#kmName').on('input', function(){$(this).css("width", Math.ceil($(this).textWidth())+18)});
@@ -97,6 +98,7 @@ $( document ).ready(function() {
 		jsondata.keymaps.splice(index, 0, keymap);
 		loadKeymaps();
 		$('.sidenav a:nth-child('+(3+index+1)+')').addClass("glow");
+		iconKeymapRemove();
 	}
 
 	function getName(name) {
@@ -184,43 +186,14 @@ $( document ).ready(function() {
 	/*	Copy/Paste layers				*/
 	/************************************/
 
-	function keymapCopy() {
-		var keymapsourceid=$(".sideselected").attr("data-index");
-		keymapName = getName(jsondata.keymaps[keymapsourceid].name);
-		keymapAbbr = getAbbr(jsondata.keymaps[keymapsourceid].abbreviation);
-		createKeymap(keymapName, keymapAbbr);
-
-		// Search new keymap
-		var keymapdestid = 0;
-		while (jsondata.keymaps[keymapdestid].name != keymapName && jsondata.keymaps[keymapdestid].abbreviation != keymapAbbr)
-			keymapdestid++;
-
-		// Copy layers
-		for (i=0; i<layers.length; i++) {
-			copyLayer(keymapsourceid, i, 2, keymapdestid, i);
-		}
-
-		$('.sidenav a:nth-child('+(4+keymapdestid)+')').trigger('click');
-
-	}
-
-	function keymapRemove() {
-		if (jsondata.keymaps.length > 1) { // You can't remove last keymap
-			let keymapID = $(".sideselected").attr("data-index");
-			if (jsondata.keymaps[keymapID].isDefault==true)
-				jsondata.keymaps[0].isDefault = true;
-			jsondata.keymaps.splice(keymapID, 1);
-			loadKeymaps();
-			$('.sidenav a:nth-child('+4+')').trigger("click");
-		}
-	}
-
 	function keyCopy() {
 		$('#copy'+$(this).parent().attr("data-side")+'Keymap').val($(".sideselected").attr("data-index"));
 		$('#copy'+$(this).parent().attr("data-side")+'Layer').val($("input[name='layer']:checked").val());
 
 		$("#clip"+$(this).parent().attr("data-side")+"K").text(jsondata.keymaps[$(".sideselected").attr("data-index")].abbreviation);
 		$("#clip"+$(this).parent().attr("data-side")+"L").text(layers[$("input[name='layer']:checked").val()]);
+		
+		$('#clipleftK, #clipleftL, #cliprightK, #cliprightL').removeClass("blink");
 	}
 
 	function keyPaste() {
@@ -237,7 +210,6 @@ $( document ).ready(function() {
 			copyLayer($('#copy'+$(this).parent().attr("data-side")+'Keymap').val(), $('#copy'+$(this).parent().attr("data-side")+'Layer').val(), side, dkeymap, dlayer);
 			viewKeymap(dkeymap, dlayer);
 		}
-		//hideOptions();
 	}
 
 	function copyLayer(sourceKeymap, sourceLayer, side, destKeymap, destLayer) {
@@ -330,7 +302,7 @@ $( document ).ready(function() {
 
 
 	/************************************/
-	/*	Keymaps							*/
+	/*	Keymaps. Basic functions		*/
 	/************************************/
 
 	function loadKeymaps() {
@@ -432,98 +404,104 @@ $( document ).ready(function() {
 		}
 	}
 
-	/*function showOptions() {
-		var screen = $('<div id="lockScreen"/>');
-		screen.click(hideOptions);
-		//var screen = $('#divKeymap');
-
-		var copy = $('<div/>')
-			.addClass("copy")
-			.append($('<img>')
-				.attr('src', 'copy.png')
-				.css('width', '100%')
-			);
-
-		var paste = $('<div/>')
-			.addClass("paste")
-			.append($('<img>')
-				.attr('src', 'paste.png')
-				.css('width', '100%')
-			);
-
-		var clear = $('<div/>')
-			.addClass("clear")
-			.append($('<img>')
-				.attr('src', 'remove.png')
-				.css('width', '100%')
-			);
-
-		var menuL = $('<div id="keyDivOptions"/>');
-		menuL.css("left", '565px');
-		menuL.attr("data-side", "left");
-
-		let item = clear.clone();
-		item.addClass("iconleft");
-		menuL.append(item);
-
-		item = copy.clone();
-		item.addClass("iconright");
-		menuL.append(item);
-
-		item = paste.clone();
-		item.addClass("iconright");
-		menuL.append(item);
-
-		menuL.click(function(e){e.stopPropagation();});
-		menuL.hover(glowKeySide, noglowKeySide);
-		menuL.appendTo(screen);
-
-		var menuR = $('<div id="keyDivOptions"/>');
-		menuR.css("left", '1065px');
-		menuR.attr("data-side", "right");
-
-		item = clear.clone();
-		item.addClass("iconright");
-		menuR.append(item);
-
-		item = copy.clone();
-		item.addClass("iconleft");
-		menuR.append(item);
-
-		item = paste.clone();
-		item.addClass("iconleft");
-		menuR.append(item);
-
-		menuR.click(function(e){e.stopPropagation();});
-		menuR.hover(glowKeySide, noglowKeySide);
-		menuR.appendTo(screen);
-
-		$("body").append(screen);
-
-		$('.clear').click(keyClear);
-		$('.copy').click(keyCopy);
-		$('.paste').click(keyPaste);
-	}
-
-	function hideOptions() {
-		$('.copy').off();
-		$('.paste').off();
-		$('#lockScreen').remove();
-		noglowKeySide();
-	}*/
-
 	function glowKeySide() {
 		$('#keyboardGlow').removeClass("hide");
-		if ($(this).attr("data-side") == "left")
-			$('#keyboardGlow').css("background", "linear-gradient(90deg, #FFF2 0%,#FFF2 46%,#000A 52%,#000A 100%)");
-		else if ($(this).attr("data-side") == "right")
-			$('#keyboardGlow').css("background", "linear-gradient(90deg, #000A 0%,#000A 44%,#FFF2 50%,#FFF2 100%)");
+		//if ($(this).attr("data-side") == "left")
+		if ($(this).parent().attr("data-side") == "left") {
+			$('#keyboardGlow').css("background", "linear-gradient(90deg, #FFF2 0%,#FFF2 39%,#000A 52%,#000A 100%)");
+			if ($(this).hasClass("clear")) {
+				$('#clipleftK, #clipleftL').css('opacity', '0');
+			} else if ($(this).hasClass("copy")) {
+				$('#clipleftK, #clipleftL').addClass("blink");
+			}
+		}
+		//else if ($(this).attr("data-side") == "right")
+		else if ($(this).parent().attr("data-side") == "right") {
+			$('#keyboardGlow').css("background", "linear-gradient(90deg, #000A 0%,#000A 44%,#FFF2 55%,#FFF2 100%)");
+			if ($(this).hasClass("clear")) {
+				$('#cliprightK, #cliprightL').css('opacity', '0');
+			} else if ($(this).hasClass("copy")) {
+				$('#cliprightK, #cliprightL').addClass("blink");
+			}
+		}
 		else
-			$('#keyboardGlow').css("background", "#FFF2");
+			$('#keyboardGlow').css("background", "#FFF2"); // Not used
 	}
 
 	function noglowKeySide() {
 		$('#keyboardGlow').addClass("hide");
+		$('#clipleftK, #clipleftL, #cliprightK, #cliprightL').css('opacity', '1');
+		$('#clipleftK, #clipleftL, #cliprightK, #cliprightL').removeClass("blink");
+	}
+
+	/************************************/
+
+
+	/************************************/
+	/*	Keymaps. Copy and remove		*/
+	/************************************/
+
+	function keymapCopy() {
+		var keymapsourceid=$(".sideselected").attr("data-index");
+		keymapName = getName(jsondata.keymaps[keymapsourceid].name);
+		keymapAbbr = getAbbr(jsondata.keymaps[keymapsourceid].abbreviation);
+		createKeymap(keymapName, keymapAbbr);
+
+		// Search new keymap
+		var keymapdestid = 0;
+		while (jsondata.keymaps[keymapdestid].name != keymapName && jsondata.keymaps[keymapdestid].abbreviation != keymapAbbr)
+			keymapdestid++;
+
+		// Copy layers
+		for (i=0; i<layers.length; i++) {
+			copyLayer(keymapsourceid, i, 2, keymapdestid, i);
+		}
+
+		$('.sidenav a:nth-child('+(4+keymapdestid)+')').trigger('click');
+	}
+
+	function keymapRemove() {
+		if (jsondata.keymaps.length > 1) { // You can't remove last keymap
+			let keymapID = $(".sideselected").attr("data-index");
+			keymapRemoveConfirm(keymapID);
+		} else
+			keymapRemoveNO();
+	}
+
+	function keymapRemoveConfirm(id) {
+		var screen = $('<div id="lockScreen"/>');
+		screen.click(keymapRemoveNO);
+
+		var question = "<div id='confirmText'><span>Do you want to remove keymap " + jsondata.keymaps[id].name + " (" + jsondata.keymaps[id].abbreviation + ") ?</span><br><br><span>It cannot be undone</span></div>";
+		var input1 = $('<input type="button" value="YES">');
+		input1.on("click", keymapRemoveYES);
+		var input2 = $('<input type="button" value="NO">');
+		input2.on("click", keymapRemoveNO);
+		var buttons = $("<div id='confirmButtons' />");
+		buttons.append(input1);
+		buttons.append(input2);
+
+		var box = $('<div id="box"/>');
+		box.css("margin", 'auto');
+		box.append(question);
+		box.append(buttons);
+		box.appendTo(screen);
+
+		$("body").append(screen);
+	}
+
+	function keymapRemoveYES() {
+		let id = $(".sideselected").attr("data-index");
+		if (jsondata.keymaps[id].isDefault==true)
+			jsondata.keymaps[(id == 0) ? 1 : 0].isDefault = true;
+		jsondata.keymaps.splice(id, 1);
+		loadKeymaps();
+		$('.sidenav a:nth-child('+4+')').trigger("click");
+		iconKeymapRemove();
+	}
+
+	function keymapRemoveNO() {
+		$('#lockScreen').remove();
 	}
 
 
@@ -614,5 +592,12 @@ $( document ).ready(function() {
 
 	function capitalize(word) {
 		return word.charAt(0).toUpperCase() + word.slice(1);
+	}
+	
+	function iconKeymapRemove() {
+		if (jsondata.keymaps.length > 1)
+			$('#keymapRemove').show();
+		else
+			$('#keymapRemove').hide();
 	}
 });

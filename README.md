@@ -23,6 +23,12 @@ You can use it online [here](https://izk666.github.io/UHK-Viewer/), or dowload a
 - Modules don't get cleared.
 
 ## Changelog
+### 26 July 2021
+- Added: Confirmation for keymap deletion
+- Fixed: Default keymap wasn't assigned correctly after removing the default one
+- UI: Keymap name in red
+- UI: Added some animations to buttons
+
 ### 24 July 2021
 - New: Clone and delete keymaps
 
@@ -35,4 +41,3 @@ You can use it online [here](https://izk666.github.io/UHK-Viewer/), or dowload a
 ## To do
 - Edit macros
 - Show modules
-- Add confirmation for keymap deletion
