@@ -23,6 +23,9 @@ You can use it online [here](https://izk666.github.io/UHK-Viewer/), or dowload a
 - Modules don't get cleared.
 
 ## Changelog
+### v2.15
+- Fixed: Copy layers wasn't working correctly
+
 ### v2.11
 - Added: Confirmation for keymap deletion
 - Fixed: Default keymap wasn't assigned correctly after removing the default one

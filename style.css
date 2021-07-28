@@ -155,13 +155,16 @@ table {
 #tmacro td {
 	padding:						10px 20px;
 	border:							1px solid #ccc;
+	line-height:					1.5em;
 }
 
 .macroCommand {
 	font-weight:					bold;
 }
 
-
+.editMacro {
+	width:							24px;
+}
 
 /* ******************** */
 /*	Scrollbars			*/
@@ -373,37 +376,6 @@ table {
 	transform:						scale(1.5);
 }
 
-#lockScreen {
-	position:						absolute;
-	width:							99%;
-	height:							99%;
-	background:						#0009;
-	z-index:						10;
-}
-
-#box {
-    width:							40%;
-    height:							20%;
-    position:						absolute;
-    left:							500px;
-    top:							30%;
-	background-color:				#EEE;
-	padding:						20px;
-}
-
-#confirmText {
-	font-size:						20px;
-}
-#confirmButtons {
-	position:						absolute;
-	bottom:							20px;
-	left:							25%;
-}
-
-#confirmButtons input {
-	margin:							20px;
-}
-
 #keyDivOptionsL, #keyDivOptionsR {
 	top:							620px;
 	height:							auto;
@@ -486,3 +458,46 @@ table {
 .blink {
 	animation: blinking 0.5s infinite;
 }
+
+
+/* ******************** */
+/*	Keyboard related	*/
+/* ******************** */
+
+#lockScreen {
+	position:						absolute;
+	width:							99%;
+	height:							99%;
+	background:						#0009;
+	z-index:						10;
+}
+
+#box {
+    width:							40%;
+    height:							25%;
+    position:						absolute;
+    left:							500px;
+    top:							30%;
+	background-color:				#EEE;
+	padding:						20px;
+}
+
+#confirmText {
+	font-size:						20px;
+}
+#confirmButtons {
+	position:						absolute;
+	bottom:							20px;
+	left:							25%;
+}
+
+#confirmButtons input {
+	margin-right:					20px
+}
+
+#lockscreen textarea {
+	width:							80%;
+	height:							70%;
+	margin-left:					10%;
+}
+
