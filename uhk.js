@@ -17,10 +17,10 @@ $( document ).ready(function() {
 
 	$('#keymapCopy').click(keymapCopy);
 	$('#keymapRemove').click(keymapRemove);
+	//$('#macroCopy').click(macroCopy);
+	$('#macroRemove').click(macroRemove);
 
 	$("input[type='radio'").change(changeLayer);
-	/*$("#keyDivOptionsL").hover(glowKeySide, noglowKeySide);
-	$("#keyDivOptionsR").hover(glowKeySide, noglowKeySide);*/
 
 	$('.clear').click(keyClear).hover(glowKeySide, noglowKeySide);
 	$('.copy').click(keyCopy).hover(glowKeySide, noglowKeySide);
@@ -229,11 +229,9 @@ $( document ).ready(function() {
 			}
 		}
 		if (side != 0) {
-			//jsondata.keymaps[destKeymap].layers[destLayer].modules[1] = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[1];
 			jsondata.keymaps[destKeymap].layers[destLayer].modules[1].id = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[1].id;
 			jsondata.keymaps[destKeymap].layers[destLayer].modules[1].keyActions = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[1].keyActions.slice();
 			if (modules) {
-				//jsondata.keymaps[destKeymap].layers[destLayer].modules[2] = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[2];
 				jsondata.keymaps[destKeymap].layers[destLayer].modules[2].id = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[2].id;
 				jsondata.keymaps[destKeymap].layers[destLayer].modules[2].keyActions = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[2].keyActions.slice();
 
@@ -250,10 +248,8 @@ $( document ).ready(function() {
 	/************************************/
 
 	function keyClear() {
-		// confirm question
 		clearLayer($(".sideselected").attr("data-index"), $("input[name='layer']:checked").val(), ($(this).parent().attr("data-side") == "left" ? 1 : $(this).parent().attr("data-side") == "right" ? 0 : "Both"));
 		viewKeymap($(".sideselected").attr("data-index"), $("input[name='layer']:checked").val());
-		//hideOptions();
 	}
 
 	function clearLayer(keymap, layer, side) {
@@ -542,31 +538,16 @@ $( document ).ready(function() {
 	}
 
 	function viewMacro(macro) {
-		$('#macroTitle').text(jsondata.macros[macro].name);
+		//$('#macroTitle').text(jsondata.macros[macro].name);
+		$('#macName').val(jsondata.macros[macro].name);
 		while ($('#tmacro tr').length > 0)
 			$('#tmacro tr')[0].remove();
 		var mergedUntil = -1;
 		for (i=0; i<jsondata.macros[macro].macroActions.length; i++) {
 			action = jsondata.macros[macro].macroActions[i].macroActionType;
 			if (action == "text") {
-				$('#tmacro').append("<tr><td>Write text</td><td class='macroCommand'>" + jsondata.macros[macro].macroActions[i].text + "</td></tr>");
-				/*if (jsondata.macros[macro].macroActions[i].text[0] == "$") {
-					let j = i;
-					while (jsondata.macros[macro].macroActions[j].macroActionType == "text" && jsondata.macros[macro].macroActions[j].text[0] == "$") {
-						j++;
-						if (j == jsondata.macros[macro].macroActions.length) {
-							break;
-						}
-					}
-					var lines = "";
-					for (k=i; k < j; k++) {
-						lines += KarelSyntax(jsondata.macros[macro].macroActions[k].text) + "<br>";
-					}
-					$('#tmacro').append("<tr><td>Write text</td><td class='macroCommand'>" + lines + "</td><td><img class='editMacro' src='edit.png' data-id='" + i + "' data-id2='" + (j-1) + "'></td></tr>");
-					i = j-1;
-				}
-				else
-					$('#tmacro').append("<tr><td>Write text</td><td class='macroCommand'>" + jsondata.macros[macro].macroActions[i].text + "</td><td><img class='editMacro' name='editMacro' src='edit.png' data-id='" + i + "' data-id3='" + i + "'></td></tr>");*/
+				//$('#tmacro').append("<tr><td>Write text</td><td class='macroCommand'>" + jsondata.macros[macro].macroActions[i].text + "</td></tr>");
+				$('#tmacro').append("<tr><td>Write text</td><td class='macroCommand'>" + jsondata.macros[macro].macroActions[i].text + "</td><td><img class='editMacro' name='editMacro' src='edit.png'></td></tr>");
 
 			} else if (action == "key") {
 				action = capitalize(jsondata.macros[macro].macroActions[i].action) + " key";
@@ -618,8 +599,28 @@ $( document ).ready(function() {
 	function editMacro(){
 		var screen = $('<div id="lockScreen"/>');
 
-		let v1 = $(this).attr("data-id");
-		let v2 = $(this).attr("data-id2") ? $(this).attr("data-id2") : $(this).attr("data-id");
+		let v1 = $(this).parent().parent().index();
+		let v2 = v1;
+
+		// Search first and last line to edit (macro mode)
+		if (jsondata.macros[$(".sideselected").attr("data-index")].macroActions[v1].text[0] == '$') {
+			while (v1 >= 0) {
+				if (jsondata.macros[$(".sideselected").attr("data-index")].macroActions[v1].macroActionType == 'text' && jsondata.macros[$(".sideselected").attr("data-index")].macroActions[v1].text[0] == '$')
+					v1--;
+				else
+					break;
+			}
+			while (v2 < jsondata.macros[$(".sideselected").attr("data-index")].macroActions.length) {
+				if (jsondata.macros[$(".sideselected").attr("data-index")].macroActions[v2].macroActionType == 'text' && jsondata.macros[$(".sideselected").attr("data-index")].macroActions[v2].text[0] == '$')
+					v2++;
+				else
+					break;
+			}
+			console.log("END");
+			v1++;
+			v2--;
+		}
+
 		var question = "<div id='confirmText'><textarea id='txt'>"
 		for (i=v1; i <= v2; i++) {
 			question += jsondata.macros[$(".sideselected").attr("data-index")].macroActions[i].text + "\n";
@@ -631,11 +632,11 @@ $( document ).ready(function() {
 		var input2 = $('<input type="button" value="CANCEL">');
 		input2.on("click", removeLockscreen);
 		var buttons = $("<div id='confirmButtons' />");
-		buttons.append("<label><input id='chkSplit' type='checkbox'" + ((v1 != v2) ? "checked" : "") + ">Macro mode (each line will be a new macro entry)</label><br>");
+		buttons.append("<label><input id='chkSplit' type='checkbox'" + ((v1 != v2) ? "checked" : "") + ">Macro mode (each line will be splitted in different entries)</label><br>");
 		buttons.append(input1);
 		buttons.append(input2);
 		buttons.append("<input type='text' class='hide' id='line1' value='" + v1 + "'><input type='text' class='hide' id='line2' value='" + v2 + "'>");
-		
+
 
 		var box = $('<div id="box"/>');
 		box.css("margin", 'auto');
@@ -645,6 +646,17 @@ $( document ).ready(function() {
 
 		$("body").append(screen);
 
+		$("#lockScreen").append($('.keyboard')[0].cloneNode(true));
+		$("#lockScreen .keyboard").addClass("minikb").removeClass("keyboard");
+		while ($(".minikb").children().length > 69) {
+			$(".minikb").children()[69].remove();
+		}
+		$(".minikb .key").addClass("minikey");
+		$(".minikb .key").removeClass("key");
+		//$(".minikb .key").addClass("minikey").removeClass("key");
+		$(".minikb .key").text("");
+		for (i=0; i<keyboard_en.length; i++)
+			$(".minikey:eq("+i+")").text(keyboard_en[i]);
 	}
 	
 	function editMacroSave() {
@@ -664,6 +676,44 @@ $( document ).ready(function() {
 		viewMacro($(".sideselected").attr("data-index"));
 	}
 
+	function macroRemove() {
+		let macroID = $(".sideselected").attr("data-index");
+		macroRemoveConfirm(macroID);
+	}
+
+	function macroRemoveConfirm(id) {
+		var screen = $('<div id="lockScreen"/>');
+		screen.click(removeLockscreen);
+
+		var question = "<div id='confirmText'><span>Do you want to remove macro " + jsondata.macros[id].name + "?</span><br><br><span>It cannot be undone</span></div>";
+		var input1 = $('<input type="button" value="YES">');
+		input1.on("click", macroRemoveYES);
+		var input2 = $('<input type="button" value="NO">');
+		input2.on("click", removeLockscreen);
+		var buttons = $("<div id='confirmButtons' />");
+		buttons.append(input1);
+		buttons.append(input2);
+
+		var box = $('<div id="box"/>');
+		box.css("margin", 'auto');
+		box.append(question);
+		box.append(buttons);
+		box.appendTo(screen);
+		box.click(function() {event.stopPropagation()});
+
+		$("body").append(screen);
+	}
+
+	function macroRemoveYES() {
+		let id = $(".sideselected").attr("data-index");
+		jsondata.macros.splice(id, 1);
+		loadMacros();
+		if (jsondata.macros.length > 0)
+			$('#mm').next().trigger("click");
+		else
+			$(".element").addClass("hide");
+		removeLockscreen();
+	}
 
 	/************************************/
 

@@ -8,7 +8,8 @@ src: url("digital-7.ttf");
 /* ******************** */
 
 #sideMenu {
-	height:							100%;
+	height:							95%;
+	padding:						10 0px;
 	width:							250px;
 	position:						fixed;
 	overflow-y:						auto;
@@ -133,6 +134,23 @@ input[type="text"] {
 /*	MACROS				*/
 /* ******************** */
 
+#macroTitle {
+	font-size:						24px;
+	font-weight:					bold;
+}
+	
+#macName {
+	font-size:						24px;
+	font-weight:					bold;
+	height:							3em;
+	border:							0px;
+	outline:						none;
+	margin-right:					25px;
+	/*text-decoration-line:			underline;
+	text-decoration-style:			dashed;
+	text-decoration-color:			#666;*/
+}
+
 table {
 	width:							50%;
 	font-size:						16px;
@@ -142,10 +160,12 @@ table {
 	border-collapse:				collapse;
 	margin-top:						5%;
 	margin-left:					5%;
+	width:							60%;
 }
 
 #tmacro tr {
-	border:							1px solid #ccc;
+	border-top:						1px solid #ccc;
+	border-bottom:					1px solid #ccc;
 }
 
 #tmacro tr td:first-child {
@@ -154,7 +174,7 @@ table {
 
 #tmacro td {
 	padding:						10px 20px;
-	border:							1px solid #ccc;
+	/*border:							1px solid #ccc;*/
 	line-height:					1.5em;
 }
 
@@ -165,6 +185,7 @@ table {
 .editMacro {
 	width:							24px;
 }
+
 
 /* ******************** */
 /*	Scrollbars			*/
@@ -277,7 +298,6 @@ table {
     color:							#FFF;
     border:							2px solid grey;
     border-radius:					5px;
-    grid-column:					span 4;
     font-size:						15px;
     text-align:						center;
     padding-top:					15px;
@@ -287,6 +307,10 @@ table {
 	transform:						scale(1.6);
     font-size:						10px;
     background-color:				#333;
+}
+
+.key4 {
+    grid-column:					span 4;
 }
 
 .key5, .nokey {
@@ -318,7 +342,7 @@ table {
 }
 
 /* ******************** */
-/*	Keyboard related	*/
+/*	Keyboard Title/Note	*/
 /* ******************** */
 
 #keymapTitle {
@@ -357,24 +381,10 @@ table {
 	margin-top:						600px;	
 }
 
-.threedots {
-	position:						absolute;
-	margin-top:						50px;
-}
 
-#options {
-	width:							25px;
-	margin-top:						10px;
-	margin-left:					550px;
-	transition:						transform .2s;
-}
-
-#options:hover,
-.clear:hover,
-.copy:hover,
-.paste:hover {
-	transform:						scale(1.5);
-}
+/* ******************** */
+/*	Copy/Paste/Clear	*/
+/* ******************** */
 
 #keyDivOptionsL, #keyDivOptionsR {
 	top:							620px;
@@ -389,6 +399,29 @@ table {
 	font-family:					"Digital";
 	text-align:						center;
 	color:							#ccc;
+}
+
+.clear:hover,
+.copy:hover,
+.paste:hover {
+	transform:						scale(1.5);
+}
+
+.clear {
+	width:							24%;
+	padding:						1px;
+}
+
+.copy {
+	width:							25%;
+	padding:						1px 2px;
+}
+
+.paste {
+	width:							25%;
+	float:							left;
+	padding:						1px 2px;
+	margin-top:						1px;
 }
 
 #cliprightK, #clipleftK {
@@ -418,23 +451,6 @@ table {
 	padding:						0px;
 }
 
-.clear {
-	width:							24%;
-	padding:						1px;
-}
-
-.copy {
-	width:							25%;
-	padding:						1px 2px;
-}
-
-.paste {
-	width:							25%;
-	float:							left;
-	padding:						1px 2px;
-	margin-top:						1px;
-}
-
 .iconright {
 	float:							right;
 }
@@ -461,7 +477,7 @@ table {
 
 
 /* ******************** */
-/*	Keyboard related	*/
+/*	Popup				*/
 /* ******************** */
 
 #lockScreen {
@@ -476,7 +492,7 @@ table {
     width:							40%;
     height:							25%;
     position:						absolute;
-    left:							500px;
+    left:							30%;
     top:							30%;
 	background-color:				#EEE;
 	padding:						20px;
@@ -499,5 +515,38 @@ table {
 	width:							80%;
 	height:							70%;
 	margin-left:					10%;
+}
+
+.minikb {
+	display:						grid;
+	width:							30%;
+	height:							15%;
+	padding:						15px 10px 20px;
+	position:						absolute;
+	background-color:				#333;
+	border-radius:					10px;
+	grid-template-columns:			repeat(63, .6%);
+	grid-template-rows:				repeat(5, 20%);
+	grid-gap:						1%;
+	top:							62%;
+	left:							35%;
+}
+
+.minikey {
+    background-color:				#222;
+    color:							#FFF;
+    border:							2px solid grey;
+    border-radius:					5px;
+    font-size:						15px;
+    text-align:						center;
+    white-space:					nowrap;
+}
+
+.minikey:hover {
+	transform:						scale(1.6);
+    font-size:						10px;
+    background-color:				#333;
+    white-space:					normal;
+    word-spacing:					10vw;
 }
 

@@ -22,7 +22,17 @@ You can use it online [here](https://izk666.github.io/UHK-Viewer/), or dowload a
 - When a side is copied, modules are copied too (key cluster for left side and trackball for right side), although not shown
 - Modules don't get cleared.
 
+## To do
+- Edit macros
+- Show modules
+
 ## Changelog
+### v2.21
+- Added: Remove existing macros
+
+### v2.20
+- Updated: New commands for Karel's macros
+
 ### v2.15
 - Fixed: Copy layers wasn't working correctly
 
@@ -40,7 +50,3 @@ You can use it online [here](https://izk666.github.io/UHK-Viewer/), or dowload a
 - UI: Copy/Paste/Clear buttons always shown
 - UI: Show clipboard content (abbreviation and layer)
 - Fixed: Edit abbreviations
-
-## To do
-- Edit macros
-- Show modules
