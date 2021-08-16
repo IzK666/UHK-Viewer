@@ -14,6 +14,7 @@ $( document ).ready(function() {
 
 	$("#sideMenu a").click(menuselect);
 	$('#newKeymap').click(newKeymap);
+	$('#newMacro').click(newMacro);
 
 	$('#keymapCopy').click(keymapCopy);
 	$('#keymapRemove').click(keymapRemove);
@@ -299,6 +300,7 @@ $( document ).ready(function() {
 			getFileConfig(input.files[0]);
 		}
 		$('#newKeymap').show();
+		$('#newMacro').show();		
 	}
 
 	function getFileConfig(file) {
@@ -699,7 +701,7 @@ $( document ).ready(function() {
 		let macroID = 0;
 		while (jsondata.macros[macroID].name != a)
 			macroID++;
-		$('.sidenav a:nth-child('+(1+$('#mm').index()+macroID)+')').trigger('click');
+		$('.sidenav a:nth-child('+(2+$('#mm').index()+macroID)+')').trigger('click');
 	}
 
 	function createMacro(aname) {
@@ -713,7 +715,7 @@ $( document ).ready(function() {
 		}
 		jsondata.macros.splice(index, 0, macro);
 		loadMacros();
-		$('.sidenav a:nth-child('+(3+index+1)+')').addClass("glow");
+		$('.sidenav a:nth-child('+(2+$('#mm').index()+index)+')').addClass("glow");
 	}
 
 	function getMName(name) {
