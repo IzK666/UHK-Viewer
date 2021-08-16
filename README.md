@@ -23,12 +23,14 @@ You can use it online [here](https://izk666.github.io/UHK-Viewer/), or dowload a
 - Modules don't get cleared.
 
 ## To do
-- Edit macros
+- Edit macros (working)
 - Show modules
+- Renamed keymaps and macros should modify the keys that call those functions
 
 ## Changelog
 ### v2.21
-- Added: Remove existing macros
+- Added: Remove macros
+- Added: Rename macros
 
 ### v2.20
 - Updated: New commands for Karel's macros

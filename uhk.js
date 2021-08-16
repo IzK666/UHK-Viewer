@@ -17,7 +17,7 @@ $( document ).ready(function() {
 
 	$('#keymapCopy').click(keymapCopy);
 	$('#keymapRemove').click(keymapRemove);
-	//$('#macroCopy').click(macroCopy);
+	$('#macroCopy').click(macroCopy);
 	$('#macroRemove').click(macroRemove);
 
 	$("input[type='radio'").change(changeLayer);
@@ -36,6 +36,9 @@ $( document ).ready(function() {
 		$(this)[0].setSelectionRange(s,e);
 		$(this).css("width", $(this).textWidth()+10);
 	});
+
+	$('#macName').change(macNewName);
+	$('#macName').on('input', function(){$(this).css("width", Math.ceil($(this).textWidth())+18)});
 
 	function showError(text) { // Unused
 		$("#txtError").html(text);
@@ -96,9 +99,9 @@ $( document ).ready(function() {
 						layer[i].modules[3].keyActions.push(null);
 			}
 		let keymap = {isDefault: false, abbreviation: abbr, name: aname, description: "", layers: layer};
-		let index = 0
-		let capsname = aname.toUpperCase();
-		while (index < jsondata.keymaps.length && jsondata.keymaps[index].name.toUpperCase() < capsname) {
+		let index = 0;
+		
+		while (index < jsondata.keymaps.length && jsondata.keymaps[index].name.toUpperCase() < aname) {
 			index++;
 		}
 		jsondata.keymaps.splice(index, 0, keymap);
@@ -144,9 +147,17 @@ $( document ).ready(function() {
 		// Sets correct width for name field
 
 		var old = jsondata.keymaps[$('.sideselected').attr("data-index")].name;
-		if (old == $('#kmName').val())
+		var newName = $('#kmName').val();
+		if (old == newName)
 			return;
-		if ($('#kmName').val().trim().length == 0)
+
+		for (i=0; i<jsondata.keymaps.length; i++)
+			if (jsondata.keymaps[i].name == newName) {
+				$('#kmName').val(old);
+				return;
+			}
+
+		if (newName.trim().length == 0)
 			$('#kmName').val(old).css("width", Math.ceil($('#kmName').textWidth())+18);
 		else {
 			$('#kmName').val(getName($('#kmName').val())).css("width", Math.ceil($('#kmName').textWidth())+18);
@@ -154,13 +165,12 @@ $( document ).ready(function() {
 			// Now, we have to sort the keymap into the correct position
 			old = parseInt($('.sideselected').attr("data-index"));
 			let index = 0
-			let capsname = $("#kmName").val().toUpperCase();
+			let capsname = $("#kmName").val();
 			while (index < jsondata.keymaps.length && jsondata.keymaps[index].name.toUpperCase() < capsname) {
 				index++;
 			}
 			jsondata.keymaps[old].name = $("#kmName").val();
 			if (index != old && index != old+1) {
-				console.log("Keymap " + $("#kmName").val() + " move from "+old + " to "+index);
 				jsondata.keymaps.splice(index, 0, jsondata.keymaps[old]);
 				jsondata.keymaps.splice((old > index) ? old+1 : old, 1);
 			}
@@ -676,6 +686,107 @@ $( document ).ready(function() {
 		viewMacro($(".sideselected").attr("data-index"));
 	}
 
+	/************************************/
+
+
+	/************************************/
+	/*	Macros. Copy and remove		*/
+	/************************************/
+
+	function newMacro() {
+		let a = getMName("New macro");
+		createMacro(a);
+		let macroID = 0;
+		while (jsondata.macros[macroID].name != a)
+			macroID++;
+		$('.sidenav a:nth-child('+(1+$('#mm').index()+macroID)+')').trigger('click');
+	}
+
+	function createMacro(aname) {
+		// Create a new blank keymap
+		let macro;
+		macro = {isLooped: false, isPrivate: true, name: aname, macroActions: []};
+
+		let index = 0
+		while (index < jsondata.macros.length && firstSortedWord(jsondata.macros[index].name, aname)) {
+			index++;
+		}
+		jsondata.macros.splice(index, 0, macro);
+		loadMacros();
+		$('.sidenav a:nth-child('+(3+index+1)+')').addClass("glow");
+	}
+
+	function getMName(name) {
+		// Get a valid (not used) name
+		var newname = name.toUpperCase();
+		for (i=0; i<jsondata.macros.length; i++)
+			if (jsondata.macros[i].name.toUpperCase() == newname) {
+				var index = name.search(/\(\d+\)$/);
+				if (index > 0) {
+					var number = parseInt(name.slice(index+1, -1)) + 1;
+					name = name.slice(0, index) + "(" + number + ")";
+					return getMName(name);
+				} else {
+					return (getMName(name + " (2)"));
+				}
+			}
+		return name;
+	}
+
+	function macNewName() {
+		// Place macro on the correct position (alphabetically).
+		// Sets correct width for name field
+
+		var old = jsondata.macros[$('.sideselected').attr("data-index")].name;
+		var newName = $('#macName').val();
+		if (old == $('#macName').val())
+			return;
+
+		for (i=0; i<jsondata.macros.length; i++)
+			if (jsondata.macros[i].name == newName) {
+				$('#macName').val(old);
+				return;
+			}
+
+		if ($('#macName').val().trim().length == 0)
+			$('#macName').val(old).css("width", Math.ceil($('#kmName').textWidth())+18);
+		else {
+			$('#macName').val(getName($('#macName').val())).css("width", Math.ceil($('#macName').textWidth())+18);
+
+			// Now, we have to sort the keymap into the correct position
+			old = parseInt($('.sideselected').attr("data-index"));
+			let index = 0
+			while (index < jsondata.macros.length && firstSortedWord(jsondata.macros[index].name, $("#macName").val())) {
+				index++;
+			}
+			jsondata.macros[old].name = $("#macName").val();
+			if (index != old && index != old+1) {
+				jsondata.macros.splice(index, 0, jsondata.macros[old]);
+				jsondata.macros.splice((old > index) ? old+1 : old, 1);
+			}
+			if (index > old)
+				index--;
+			loadMacros();
+			$('.sidenav a:nth-child('+($('#mm').index()+index+2)+')').addClass("sideselected");
+		}
+	}
+
+	function macroCopy() {
+		let macroSourceID=$(".sideselected").attr("data-index");
+		macroName = getMName(jsondata.macros[macroSourceID].name);
+		createMacro(macroName);
+
+		// Search new keymap
+		let macroDestID = 0;
+		while (jsondata.macros[macroDestID].name != macroName)
+			macroDestID++;
+
+		// Copy layers
+		jsondata.macros[macroDestID].macroActions = jsondata.macros[macroSourceID].macroActions.slice();
+
+		$('.sidenav a:nth-child('+($('#mm').index()+2+macroDestID)+')').trigger('click');
+	}
+
 	function macroRemove() {
 		let macroID = $(".sideselected").attr("data-index");
 		macroRemoveConfirm(macroID);
@@ -738,5 +849,44 @@ $( document ).ready(function() {
 
 	function removeLockscreen() {
 		$('#lockScreen').remove();
+	}
+
+	function firstSortedWord(word1, word2) {
+		/*	Custom sort method for macro names.
+			Returns if word1 is sorted first (true) or not
+			according to the next order: symbols, numbers, lowercase and uppercase.
+		*/
+		let len = Math.min(word1.length, word2.length);
+		for (i=0; i< len; i++) {
+			if (word1[i].toUpperCase() != word2[i].toUpperCase()) {
+				let group1 = getGroup(word1[i]);
+				let group2 = getGroup(word2[i]);
+
+				if (group1 < group2)
+					return true;
+
+				if (group2 < group1)
+					return false;
+
+				if (word1[i].toUpperCase() < word2[i].toUpperCase())
+					return true;
+				if (word1[i].toUpperCase() > word2[i].toUpperCase())
+					return false;
+			}
+		}
+
+		if (word1.toUpperCase() == word2.toUpperCase())
+			return (word1 > word2);
+		return (word1.length < word2.length);
+	}
+
+	function getGroup(letter) {
+		// Input: letter
+		// Output:	1 if symbol
+		//			2 if number
+		//			3 letter
+		if (letter.match(/[a-zA-Z]/)) return 3;
+		if (letter.match(/[0-9]/)) return 2;
+		return 1;
 	}
 });
