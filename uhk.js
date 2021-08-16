@@ -68,266 +68,7 @@ $( document ).ready(function() {
 
 
 	/************************************/
-	/*	CREATE NEW KEYMAP				*/
-	/************************************/
-
-	function newKeymap() {
-		let a = getName("New keymap");
-		let b = getAbbr("NEW");
-		createKeymap(a, b);
-		let keymapID = 0;
-		while (jsondata.keymaps[keymapID].name != a && jsondata.keymaps[keymapID].abbreviation != b)
-			keymapID++;
-		$('.sidenav a:nth-child('+(4+keymapID)+')').trigger('click');
-	}
-
-	function createKeymap(aname, abbr) {
-		// Create a new blank keymap
-		let layer;
-		if (modules)
-			layer = [{modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}, {id: 4, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}, {id: 4, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}, {id: 4, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}, {id: 4, keyActions: []}]}];
-		else
-			layer = [{modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}];
-		for (i=0; i<layer.length; i++)
-			for (j=0; j<2; j++)
-				for (k=0; k<35; k++)
-					layer[i].modules[j].keyActions.push(null);
-		if (modules)
-			for (i=0; i<layer.length; i++) {
-				for (k=0; k<6; k++)
-						layer[i].modules[2].keyActions.push(null);
-				for (k=0; k<2; k++)
-						layer[i].modules[3].keyActions.push(null);
-			}
-		let keymap = {isDefault: false, abbreviation: abbr, name: aname, description: "", layers: layer};
-		let index = 0;
-		
-		while (index < jsondata.keymaps.length && jsondata.keymaps[index].name.toUpperCase() < aname) {
-			index++;
-		}
-		jsondata.keymaps.splice(index, 0, keymap);
-		loadKeymaps();
-		$('.sidenav a:nth-child('+(3+index+1)+')').addClass("glow");
-		updateTrashKeymap();
-	}
-
-	function getName(name) {
-		// Get a valid (not used) name
-		var newname = name.toUpperCase();
-		for (i=0; i<jsondata.keymaps.length; i++)
-			if (jsondata.keymaps[i].name.toUpperCase() == newname) {
-				var index = name.search(/\(\d+\)$/);
-				if (index > 0) {
-					var number = parseInt(name.slice(index+1, -1)) + 1;
-					name = name.slice(0, index) + "(" + number + ")";
-					return getName(name);
-				} else {
-					return (getName(name + " (2)"));
-				}
-			}
-		return name;
-	}
-
-	function getAbbr(name, digits=0) {
-		// Get a valid (not used) abbreviation
-		var newname = name.toUpperCase();
-		for (i=0; i<jsondata.keymaps.length; i++)
-			if (jsondata.keymaps[i].abbreviation.toUpperCase() == newname) {
-				if (digits > 0) {
-					var number = parseInt(name.slice(3-digits)) +1;
-					name = name.slice(0, 3-(number > 9 ? 2 : 1)) + number;
-					return getAbbr(name, (number > 9 ? 2:1));
-				} else
-					return (getAbbr(name.slice(0,2) + "2", 1));
-			}
-		return name;
-	}
-
-	function kmNewName() {
-		// Place keymap on the correct position (alphabetically).
-		// Sets correct width for name field
-
-		var old = jsondata.keymaps[$('.sideselected').attr("data-index")].name;
-		var newName = $('#kmName').val();
-		if (old == newName)
-			return;
-
-		for (i=0; i<jsondata.keymaps.length; i++)
-			if (jsondata.keymaps[i].name == newName) {
-				$('#kmName').val(old);
-				return;
-			}
-
-		if (newName.trim().length == 0)
-			$('#kmName').val(old).css("width", Math.ceil($('#kmName').textWidth())+18);
-		else {
-			$('#kmName').val(getName($('#kmName').val())).css("width", Math.ceil($('#kmName').textWidth())+18);
-
-			// Now, we have to sort the keymap into the correct position
-			old = parseInt($('.sideselected').attr("data-index"));
-			let index = 0
-			let capsname = $("#kmName").val();
-			while (index < jsondata.keymaps.length && jsondata.keymaps[index].name.toUpperCase() < capsname) {
-				index++;
-			}
-			jsondata.keymaps[old].name = $("#kmName").val();
-			if (index != old && index != old+1) {
-				jsondata.keymaps.splice(index, 0, jsondata.keymaps[old]);
-				jsondata.keymaps.splice((old > index) ? old+1 : old, 1);
-			}
-			if (index > old)
-				index--;
-			loadKeymaps();
-			$('.sidenav a:nth-child('+(3+index+1)+')').addClass("sideselected");
-		}
-	}
-
-	function kmNewAbbr() {
-		// Sets correct width for abbreviation field
-		var old = jsondata.keymaps[$('.sideselected').attr("data-index")].abbreviation
-		if (old == $('#kmAbbr').val())
-			return;
-		if ($('#kmAbbr').val().trim().length == 0)
-			$('#kmAbbr').val(old).css("width", $('#kmAbbr').textWidth()+10);
-		else
-			$('#kmAbbr').val(getAbbr($('#kmAbbr').val())).css("width", $('#kmAbbr').textWidth()+10);
-		jsondata.keymaps[$('.sideselected').attr("data-index")].abbreviation = $('#kmAbbr').val();
-	}
-
-
-	/************************************/
-
-
-
-	/************************************/
-	/*	Copy/Paste layers				*/
-	/************************************/
-
-	function keyCopy() {
-		$('#copy'+$(this).parent().attr("data-side")+'Keymap').val($(".sideselected").attr("data-index"));
-		$('#copy'+$(this).parent().attr("data-side")+'Layer').val($("input[name='layer']:checked").val());
-
-		$("#clip"+$(this).parent().attr("data-side")+"K").text(jsondata.keymaps[$(".sideselected").attr("data-index")].abbreviation);
-		$("#clip"+$(this).parent().attr("data-side")+"L").text(layers[$("input[name='layer']:checked").val()]);
-		
-		$('#clipleftK, #clipleftL, #cliprightK, #cliprightL').removeClass("blink");
-	}
-
-	function keyPaste() {
-		if (($('#copy'+$(this).parent().attr("data-side")+'Keymap').val() == "") || ($('#copy'+$(this).parent().attr("data-side")+'Layer').val() == "")) {
-			// showError("Copy first, then paste");
-			return false;
-		}
-		var dkeymap = $(".sideselected").attr("data-index");
-		var dlayer = $("input[name='layer']:checked").val();
-		if (($('#copy'+$(this).parent().attr("data-side")+'Keymap').val() == dkeymap) && ($('#copy'+$(this).parent().attr("data-side")+'Layer').val() == dlayer)) {
-			console.log("Nothing to copy");
-		} else {
-			var side = ($(this).parent().attr("data-side") == "left" ? 1 : $(this).parent().attr("data-side") == "right" ? 0 : "Both");
-			copyLayer($('#copy'+$(this).parent().attr("data-side")+'Keymap').val(), $('#copy'+$(this).parent().attr("data-side")+'Layer').val(), side, dkeymap, dlayer);
-			viewKeymap(dkeymap, dlayer);
-		}
-	}
-
-	function copyLayer(sourceKeymap, sourceLayer, side, destKeymap, destLayer) {
-		if (side != 1) {
-			jsondata.keymaps[destKeymap].layers[destLayer].modules[0].id = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[0].id;
-			jsondata.keymaps[destKeymap].layers[destLayer].modules[0].keyActions = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[0].keyActions.slice();
-			if (modules) {
-				//jsondata.keymaps[destKeymap].layers[destLayer].modules[3] = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[3];
-				jsondata.keymaps[destKeymap].layers[destLayer].modules[3].id = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[3].id;
-				jsondata.keymaps[destKeymap].layers[destLayer].modules[3].keyActions = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[3].keyActions.slice();
-			}
-		}
-		if (side != 0) {
-			jsondata.keymaps[destKeymap].layers[destLayer].modules[1].id = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[1].id;
-			jsondata.keymaps[destKeymap].layers[destLayer].modules[1].keyActions = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[1].keyActions.slice();
-			if (modules) {
-				jsondata.keymaps[destKeymap].layers[destLayer].modules[2].id = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[2].id;
-				jsondata.keymaps[destKeymap].layers[destLayer].modules[2].keyActions = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[2].keyActions.slice();
-
-			}
-		}
-	}
-
-	/************************************/
-
-
-
-	/************************************/
-	/*	Clear layers					*/
-	/************************************/
-
-	function keyClear() {
-		clearLayer($(".sideselected").attr("data-index"), $("input[name='layer']:checked").val(), ($(this).parent().attr("data-side") == "left" ? 1 : $(this).parent().attr("data-side") == "right" ? 0 : "Both"));
-		viewKeymap($(".sideselected").attr("data-index"), $("input[name='layer']:checked").val());
-	}
-
-	function clearLayer(keymap, layer, side) {
-		console.log("Clear layer from: "+ jsondata.keymaps[keymap].name + ", layer: " + layer + ", side: "+side);
-		for (i=0; i<36; i++) {
-			if (side != 1)
-				jsondata.keymaps[keymap].layers[layer].modules[0].keyActions[i] = null;
-			if (side != 0)
-				jsondata.keymaps[keymap].layers[layer].modules[1].keyActions[i] = null;
-		}
-	}
-
-	/************************************/
-
-
-
-	/************************************/
-	/*	IMPORT/EXPORT JSON				*/
-	/************************************/
-
-	function downloadFile() {
-		if(jsondata !== undefined) {
-			let textToSave = JSON.stringify(jsondata, null, 2);
-			let hiddenElement = document.createElement('a');
-			hiddenElement.href = 'data:attachment/text,' + encodeURIComponent(textToSave);
-			hiddenElement.target = '_blank';
-			hiddenElement.download = 'userConfiguration-mod.json';
-			hiddenElement.click();
-		}
-	}
-
-	function uploadFile(event) {
-		jsondata = undefined;
-		$("#cfgDown").prop('disabled', true);
-		const input = event.target;
-		if ('files' in input && input.files.length > 0) {
-			getFileConfig(input.files[0]);
-		}
-		$('#newKeymap').show();
-		$('#newMacro').show();		
-	}
-
-	function getFileConfig(file) {
-		readFileContent(file).then(content => {
-			$("#cfgDown").prop('disabled', false);
-			jsondata = JSON.parse(content);
-			loadKeymaps();
-			loadMacros();
-			modules = (jsondata.keymaps[0].layers[0].modules.length == 4) ? true : false;
-		}).catch(error => console.log(error));
-	}
-
-	function readFileContent(file) {
-		const reader = new FileReader()
-		return new Promise((resolve, reject) => {
-			reader.onload = event => resolve(event.target.result);
-			reader.onerror = error => reject(error);
-			reader.readAsText(file);
-		})
-	}
-
-	/************************************/
-
-
-
-	/************************************/
-	/*	Keymaps. Basic functions		*/
+	/*	KEYMAPS. Basic functions		*/
 	/************************************/
 
 	function loadKeymaps() {
@@ -463,7 +204,150 @@ $( document ).ready(function() {
 
 
 	/************************************/
-	/*	Keymaps. Copy and remove		*/
+	/*	CREATE/Rename KEYMAPS			*/
+	/************************************/
+
+	function newKeymap() {
+		let a = getName("New keymap");
+		let b = getAbbr("NEW");
+		createKeymap(a, b);
+		let keymapID = 0;
+		while (jsondata.keymaps[keymapID].name != a && jsondata.keymaps[keymapID].abbreviation != b)
+			keymapID++;
+		$('.sidenav a:nth-child('+(4+keymapID)+')').trigger('click');
+	}
+
+	function createKeymap(aname, abbr) {
+		// Create a new blank keymap
+		let layer;
+		if (modules)
+			layer = [{modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}, {id: 4, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}, {id: 4, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}, {id: 4, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}, {id: 4, keyActions: []}]}];
+		else
+			layer = [{modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}];
+		for (i=0; i<layer.length; i++)
+			for (j=0; j<2; j++)
+				for (k=0; k<35; k++)
+					layer[i].modules[j].keyActions.push(null);
+		if (modules)
+			for (i=0; i<layer.length; i++) {
+				for (k=0; k<6; k++)
+						layer[i].modules[2].keyActions.push(null);
+				for (k=0; k<2; k++)
+						layer[i].modules[3].keyActions.push(null);
+			}
+		let keymap = {isDefault: false, abbreviation: abbr, name: aname, description: "", layers: layer};
+		let index = 0;
+		
+		while (index < jsondata.keymaps.length && jsondata.keymaps[index].name.toUpperCase() < aname) {
+			index++;
+		}
+		jsondata.keymaps.splice(index, 0, keymap);
+		loadKeymaps();
+		$('.sidenav a:nth-child('+(3+index+1)+')').addClass("glow");
+		updateTrashKeymap();
+	}
+
+	function getName(name) {
+		// Get a valid (not used) name
+		var newname = name.toUpperCase();
+		for (i=0; i<jsondata.keymaps.length; i++)
+			if (jsondata.keymaps[i].name.toUpperCase() == newname) {
+				var index = name.search(/\(\d+\)$/);
+				if (index > 0) {
+					var number = parseInt(name.slice(index+1, -1)) + 1;
+					name = name.slice(0, index) + "(" + number + ")";
+					return getName(name);
+				} else {
+					return (getName(name + " (2)"));
+				}
+			}
+		return name;
+	}
+
+	function getAbbr(name, digits=0) {
+		// Get a valid (not used) abbreviation
+		var newname = name.toUpperCase();
+		for (i=0; i<jsondata.keymaps.length; i++)
+			if (jsondata.keymaps[i].abbreviation.toUpperCase() == newname) {
+				if (digits > 0) {
+					var number = parseInt(name.slice(3-digits)) +1;
+					name = name.slice(0, 3-(number > 9 ? 2 : 1)) + number;
+					return getAbbr(name, (number > 9 ? 2:1));
+				} else
+					return (getAbbr(name.slice(0,2) + "2", 1));
+			}
+		return name;
+	}
+
+	function kmNewName() {
+		// Place keymap on the correct position (alphabetically).
+		// Sets correct width for name field
+
+		var old = jsondata.keymaps[$('.sideselected').attr("data-index")].name;
+		var newName = $('#kmName').val();
+		if (old == newName)
+			return;
+
+		for (i=0; i<jsondata.keymaps.length; i++)
+			if (jsondata.keymaps[i].name == newName) {
+				$('#kmName').val(old);
+				return;
+			}
+
+		if (newName.trim().length == 0)
+			$('#kmName').val(old).css("width", Math.ceil($('#kmName').textWidth())+18);
+		else {
+			$('#kmName').val(getName($('#kmName').val())).css("width", Math.ceil($('#kmName').textWidth())+18);
+
+			// Now, we have to sort the keymap into the correct position
+			old = parseInt($('.sideselected').attr("data-index"));
+			let index = 0
+			let capsname = $("#kmName").val();
+			while (index < jsondata.keymaps.length && jsondata.keymaps[index].name.toUpperCase() < capsname) {
+				index++;
+			}
+			jsondata.keymaps[old].name = $("#kmName").val();
+			if (index != old && index != old+1) {
+				jsondata.keymaps.splice(index, 0, jsondata.keymaps[old]);
+				jsondata.keymaps.splice((old > index) ? old+1 : old, 1);
+			}
+			if (index > old)
+				index--;
+			loadKeymaps();
+			$('.sidenav a:nth-child('+(3+index+1)+')').addClass("sideselected");
+		}
+	}
+
+	function kmNewAbbr() {
+		// Sets correct width for abbreviation field
+		var old = jsondata.keymaps[$('.sideselected').attr("data-index")].abbreviation;
+		if (old == $('#kmAbbr').val())
+			return;
+		if ($('#kmAbbr').val().trim().length == 0)
+			$('#kmAbbr').val(old).css("width", $('#kmAbbr').textWidth()+10);
+		else {
+			let name = getAbbr($('#kmAbbr').val());
+			$('#kmAbbr').val(name).css("width", $('#kmAbbr').textWidth()+10);
+			jsondata.keymaps[$('.sideselected').attr("data-index")].abbreviation = $('#kmAbbr').val();
+
+			for (i=0; i<jsondata.keymaps.length; i++)
+				for (j=0; j< jsondata.keymaps[i].layers.length; j++)
+					for (k=0; k<jsondata.keymaps[i].layers[j].modules.length; k++)
+						for (l=0; l<jsondata.keymaps[i].layers[j].modules[k].keyActions.length; l++)
+							if (jsondata.keymaps[i].layers[j].modules[k].keyActions[l]) //can be null
+								if (jsondata.keymaps[i].layers[j].modules[k].keyActions[l].keyActionType == "switchKeymap")
+									if (jsondata.keymaps[i].layers[j].modules[k].keyActions[l].keymapAbbreviation == old)
+										jsondata.keymaps[i].layers[j].modules[k].keyActions[l].keymapAbbreviation = name;
+		}
+	}
+
+
+	/************************************/
+
+
+
+	/************************************/
+	/*	KEYMAPS. Copy and remove		*/
 	/************************************/
 
 	function keymapCopy() {
@@ -533,6 +417,76 @@ $( document ).ready(function() {
 
 
 	/************************************/
+	/*	LAYERS: Copy/Paste/Clear		*/
+	/************************************/
+
+	function keyCopy() {
+		$('#copy'+$(this).parent().attr("data-side")+'Keymap').val($(".sideselected").attr("data-index"));
+		$('#copy'+$(this).parent().attr("data-side")+'Layer').val($("input[name='layer']:checked").val());
+
+		$("#clip"+$(this).parent().attr("data-side")+"K").text(jsondata.keymaps[$(".sideselected").attr("data-index")].abbreviation);
+		$("#clip"+$(this).parent().attr("data-side")+"L").text(layers[$("input[name='layer']:checked").val()]);
+		
+		$('#clipleftK, #clipleftL, #cliprightK, #cliprightL').removeClass("blink");
+	}
+
+	function keyPaste() {
+		if (($('#copy'+$(this).parent().attr("data-side")+'Keymap').val() == "") || ($('#copy'+$(this).parent().attr("data-side")+'Layer').val() == "")) {
+			// showError("Copy first, then paste");
+			return false;
+		}
+		var dkeymap = $(".sideselected").attr("data-index");
+		var dlayer = $("input[name='layer']:checked").val();
+		if (($('#copy'+$(this).parent().attr("data-side")+'Keymap').val() == dkeymap) && ($('#copy'+$(this).parent().attr("data-side")+'Layer').val() == dlayer)) {
+			console.log("Nothing to copy");
+		} else {
+			var side = ($(this).parent().attr("data-side") == "left" ? 1 : $(this).parent().attr("data-side") == "right" ? 0 : "Both");
+			copyLayer($('#copy'+$(this).parent().attr("data-side")+'Keymap').val(), $('#copy'+$(this).parent().attr("data-side")+'Layer').val(), side, dkeymap, dlayer);
+			viewKeymap(dkeymap, dlayer);
+		}
+	}
+
+	function copyLayer(sourceKeymap, sourceLayer, side, destKeymap, destLayer) {
+		if (side != 1) {
+			jsondata.keymaps[destKeymap].layers[destLayer].modules[0].id = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[0].id;
+			jsondata.keymaps[destKeymap].layers[destLayer].modules[0].keyActions = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[0].keyActions.slice();
+			if (modules) {
+				//jsondata.keymaps[destKeymap].layers[destLayer].modules[3] = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[3];
+				jsondata.keymaps[destKeymap].layers[destLayer].modules[3].id = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[3].id;
+				jsondata.keymaps[destKeymap].layers[destLayer].modules[3].keyActions = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[3].keyActions.slice();
+			}
+		}
+		if (side != 0) {
+			jsondata.keymaps[destKeymap].layers[destLayer].modules[1].id = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[1].id;
+			jsondata.keymaps[destKeymap].layers[destLayer].modules[1].keyActions = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[1].keyActions.slice();
+			if (modules) {
+				jsondata.keymaps[destKeymap].layers[destLayer].modules[2].id = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[2].id;
+				jsondata.keymaps[destKeymap].layers[destLayer].modules[2].keyActions = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[2].keyActions.slice();
+
+			}
+		}
+	}
+
+	function keyClear() {
+		clearLayer($(".sideselected").attr("data-index"), $("input[name='layer']:checked").val(), ($(this).parent().attr("data-side") == "left" ? 1 : $(this).parent().attr("data-side") == "right" ? 0 : "Both"));
+		viewKeymap($(".sideselected").attr("data-index"), $("input[name='layer']:checked").val());
+	}
+
+	function clearLayer(keymap, layer, side) {
+		console.log("Clear layer from: "+ jsondata.keymaps[keymap].name + ", layer: " + layer + ", side: "+side);
+		for (i=0; i<36; i++) {
+			if (side != 1)
+				jsondata.keymaps[keymap].layers[layer].modules[0].keyActions[i] = null;
+			if (side != 0)
+				jsondata.keymaps[keymap].layers[layer].modules[1].keyActions[i] = null;
+		}
+	}
+
+	/************************************/
+
+
+
+	/************************************/
 	/*	Macros							*/
 	/************************************/
 
@@ -552,6 +506,7 @@ $( document ).ready(function() {
 	function viewMacro(macro) {
 		//$('#macroTitle').text(jsondata.macros[macro].name);
 		$('#macName').val(jsondata.macros[macro].name);
+		$('#macName').css("width", Math.ceil($('#macName').textWidth())+18);
 		while ($('#tmacro tr').length > 0)
 			$('#tmacro tr')[0].remove();
 		var mergedUntil = -1;
@@ -768,6 +723,23 @@ $( document ).ready(function() {
 			}
 			if (index > old)
 				index--;
+			console.log("OLD:"+old+" ,, NEW:"+index);
+
+			for (i=0; i<jsondata.keymaps.length; i++)
+				for (j=0; j< jsondata.keymaps[i].layers.length; j++)
+					for (k=0; k<jsondata.keymaps[i].layers[j].modules.length; k++)
+						for (l=0; l<jsondata.keymaps[i].layers[j].modules[k].keyActions.length; l++)
+							if (jsondata.keymaps[i].layers[j].modules[k].keyActions[l]) //can be null
+								if (jsondata.keymaps[i].layers[j].modules[k].keyActions[l].keyActionType == "playMacro") {
+									let value = jsondata.keymaps[i].layers[j].modules[k].keyActions[l].macroIndex;
+									if (old < index && value >= old && value <= index)
+										jsondata.keymaps[i].layers[j].modules[k].keyActions[l].macroIndex = (value == old ? index : value-1);
+									else if (old > index && index <= value && value <= old)
+										jsondata.keymaps[i].layers[j].modules[k].keyActions[l].macroIndex = (value == old ? index : value+1);
+								}
+
+
+
 			loadMacros();
 			$('.sidenav a:nth-child('+($('#mm').index()+index+2)+')').addClass("sideselected");
 		}
@@ -826,6 +798,55 @@ $( document ).ready(function() {
 		else
 			$(".element").addClass("hide");
 		removeLockscreen();
+	}
+
+	/************************************/
+
+
+
+	/************************************/
+	/*	IMPORT/EXPORT JSON				*/
+	/************************************/
+
+	function downloadFile() {
+		if(jsondata !== undefined) {
+			let textToSave = JSON.stringify(jsondata, null, 2);
+			let hiddenElement = document.createElement('a');
+			hiddenElement.href = 'data:attachment/text,' + encodeURIComponent(textToSave);
+			hiddenElement.target = '_blank';
+			hiddenElement.download = 'userConfiguration-mod.json';
+			hiddenElement.click();
+		}
+	}
+
+	function uploadFile(event) {
+		jsondata = undefined;
+		$("#cfgDown").prop('disabled', true);
+		const input = event.target;
+		if ('files' in input && input.files.length > 0) {
+			getFileConfig(input.files[0]);
+		}
+		$('#newKeymap').show();
+		$('#newMacro').show();		
+	}
+
+	function getFileConfig(file) {
+		readFileContent(file).then(content => {
+			$("#cfgDown").prop('disabled', false);
+			jsondata = JSON.parse(content);
+			loadKeymaps();
+			loadMacros();
+			modules = (jsondata.keymaps[0].layers[0].modules.length == 4) ? true : false;
+		}).catch(error => console.log(error));
+	}
+
+	function readFileContent(file) {
+		const reader = new FileReader()
+		return new Promise((resolve, reject) => {
+			reader.onload = event => resolve(event.target.result);
+			reader.onerror = error => reject(error);
+			reader.readAsText(file);
+		})
 	}
 
 	/************************************/
