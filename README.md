@@ -28,9 +28,11 @@ You can use it online [here](https://izk666.github.io/UHK-Viewer/), or dowload a
 - Renamed keymaps and macros should modify the keys that call those functions
 
 ## Changelog
-### v2.24
+
+### v2.25
 - Added: Create, clone, remove and rename macros
 - Added: Simple macro editor
+- Macro viewer: Add new lines to macros and reorder existing ones
 - Fixed: When a keymap or macro is renamed, the keys assigned to them points to the new values.
 
 ### v2.20

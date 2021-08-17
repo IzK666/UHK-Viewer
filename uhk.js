@@ -330,6 +330,7 @@ $( document ).ready(function() {
 			$('#kmAbbr').val(name).css("width", $('#kmAbbr').textWidth()+10);
 			jsondata.keymaps[$('.sideselected').attr("data-index")].abbreviation = $('#kmAbbr').val();
 
+			// Edit keys on every keymap and update abbreviation when necessary
 			for (i=0; i<jsondata.keymaps.length; i++)
 				for (j=0; j< jsondata.keymaps[i].layers.length; j++)
 					for (k=0; k<jsondata.keymaps[i].layers[j].modules.length; k++)
@@ -338,6 +339,15 @@ $( document ).ready(function() {
 								if (jsondata.keymaps[i].layers[j].modules[k].keyActions[l].keyActionType == "switchKeymap")
 									if (jsondata.keymaps[i].layers[j].modules[k].keyActions[l].keymapAbbreviation == old)
 										jsondata.keymaps[i].layers[j].modules[k].keyActions[l].keymapAbbreviation = name;
+
+			// Edit clipboard
+			if ($("#copyrightKeymap").val() != "")
+				if (jsondata.keymaps[$("#copyrightKeymap").val()].abbreviation == name)
+						$("#cliprightK").text(name);
+			if ($("#copyleftKeymap").val() != "")
+				if (jsondata.keymaps[$("#copyleftKeymap").val()].abbreviation == name)
+						$("#clipleftK").text(name);
+				
 		}
 	}
 
@@ -391,7 +401,6 @@ $( document ).ready(function() {
 		buttons.append(input2);
 
 		var box = $('<div id="box"/>');
-		box.css("margin", 'auto');
 		box.append(question);
 		box.append(buttons);
 		box.appendTo(screen);
@@ -513,8 +522,7 @@ $( document ).ready(function() {
 		for (i=0; i<jsondata.macros[macro].macroActions.length; i++) {
 			action = jsondata.macros[macro].macroActions[i].macroActionType;
 			if (action == "text") {
-				//$('#tmacro').append("<tr><td>Write text</td><td class='macroCommand'>" + jsondata.macros[macro].macroActions[i].text + "</td></tr>");
-				$('#tmacro').append("<tr><td>Write text</td><td class='macroCommand'>" + jsondata.macros[macro].macroActions[i].text + "</td><td><img class='editMacro' name='editMacro' src='edit.png'></td></tr>");
+				$('#tmacro').append("<tr><td class='drag-handler'>&#9776;</td><td>Write text</td><td class='macroCommand'>" + jsondata.macros[macro].macroActions[i].text + "</td><td><img class='editLine' src='edit.png'><img class='removeLine' src='removeBlack.png'></td></tr>");
 
 			} else if (action == "key") {
 				action = capitalize(jsondata.macros[macro].macroActions[i].action) + " key";
@@ -526,23 +534,58 @@ $( document ).ready(function() {
 					value += scancode[jsondata.macros[macro].macroActions[i].scancode];
 				if (value.endsWith(" + "))
 					value = value.slice(0, -3);
-				$('#tmacro').append("<tr><td>" + action + "</td><td class='macroCommand'>" + value + "</td></tr>")
+				$('#tmacro').append("<tr><td class='drag-handler'>&#9776;</td><td>" + action + "</td><td class='macroCommand'>" + value + "</td><td><img class='removeLine' src='removeBlack.png'></td></tr>")
 			} else if (action == "delay") {
-				$('#tmacro').append("<tr><td>Delay</td><td class='macroCommand'>" + jsondata.macros[macro].macroActions[i].delay + "</td></tr>")
+				$('#tmacro').append("<tr><td class='drag-handler'>&#9776;</td><td>Delay</td><td class='macroCommand'>" + jsondata.macros[macro].macroActions[i].delay + "</td><td><img class='removeLine' src='removeBlack.png'></td></tr>")
 			} else if (action == "moveMouse") {
-				$('#tmacro').append("<tr><td>Move mouse</td><td class='macroCommand'>x:" + jsondata.macros[macro].macroActions[i].x + ", y:"+ jsondata.macros[macro].macroActions[i].y + "</td></tr>")
+				$('#tmacro').append("<tr><td class='drag-handler'>&#9776;</td><td>Move mouse</td><td class='macroCommand'>x:" + jsondata.macros[macro].macroActions[i].x + ", y:"+ jsondata.macros[macro].macroActions[i].y + "</td><td><img class='removeLine' src='removeBlack.png'></td></tr>")
 			} else if (action == "scrollMouse") {
-				$('#tmacro').append("<tr><td>Scroll mouse</td><td class='macroCommand'>x:" + jsondata.macros[macro].macroActions[i].x + ", y:"+ jsondata.macros[macro].macroActions[i].y + "</td></tr>")
+				$('#tmacro').append("<tr><td class='drag-handler'>&#9776;</td><td>Scroll mouse</td><td class='macroCommand'>x:" + jsondata.macros[macro].macroActions[i].x + ", y:"+ jsondata.macros[macro].macroActions[i].y + "</td><td><img class='removeLine' src='removeBlack.png'></td></tr>")
 			} else if (action == "mouseButton") {
 				value = "";
 				mouse.forEach(function(item, index){if (index & jsondata.macros[macro].macroActions[i].mouseButtonsMask) value += item + " + ";});
 				if (value.endsWith(" + "))
 					value = value.slice(0, -3);
-				$('#tmacro').append("<tr><td>" + capitalize(jsondata.macros[macro].macroActions[i].action) + " button</td><td class='macroCommand'>" + value + "</td></tr>");
+				$('#tmacro').append("<tr><td class='drag-handler'>&#9776;</td><td>" + capitalize(jsondata.macros[macro].macroActions[i].action) + " button</td><td class='macroCommand'>" + value + "</td><td><img class='removeLine' src='removeBlack.png'></td></tr>");
 			} else
-				$('#tmacro').append("<tr><td colspan='2'>" + jsondata.macros[macro].macroActions[i].macroActionType + "</td></tr>");
+				$('#tmacro').append("<tr><td class='drag-handler'>&#9776;</td><td colspan='2'>" + jsondata.macros[macro].macroActions[i].macroActionType + "</td><td><img class='removeLine' src='removeBlack.png'></td></tr>");
 		}
-		$('.editMacro').click(editMacro);
+
+		setEditRemoveActions();
+		
+		Sortable.create(
+			$('#tmacroBody')[0], {
+				animation: 150,
+				scroll: true,
+				handle: '.drag-handler',
+				onEnd: function (evt) {
+					jsondata.macros[$('.sideselected').attr("data-index")].macroActions.splice(evt.newIndex+(evt.newIndex > evt.oldIndex ? 1 : 0), 0, jsondata.macros[$('.sideselected').attr("data-index")].macroActions[evt.oldIndex]);
+					jsondata.macros[$('.sideselected').attr("data-index")].macroActions.splice(evt.oldIndex+(evt.newIndex < evt.oldIndex ? 1 : 0), 1);
+				}
+			}
+		);
+
+		$('.add-line_btn').off('click');
+		$('.add-line_btn').click(function(e) {
+			$('#tmacroBody').append("<tr><td class='drag-handler'>&#9776;</td><td>Write text</td><td class='macroCommand'></td><td><img class='editLine' src='edit.png'><img class='removeLine' src='removeBlack.png'></td></tr>");
+			jsondata.macros[$('.sideselected').attr("data-index")].macroActions.splice(jsondata.macros[$('.sideselected').attr("data-index")].macroActions.length, 0, {macroActionType: "text", text: ""});
+			setEditRemoveActions();
+		});
+
+	}
+
+	function setEditRemoveActions () {
+		// Adds edit and remove handlers for macro lines
+		$('.editLine').off("click");
+		$('.removeLine').off("click");
+
+		$('.editLine').click(editMacro);
+		$('.removeLine').click(function(e) {
+			var $el = $(e.currentTarget);
+			var $row = $el.closest('tr');
+			jsondata.macros[$('.sideselected').attr("data-index")].macroActions.splice($row.index(), 1);
+			$row.remove();
+		});
 	}
 
 	function KarelSyntax(text){
@@ -599,14 +642,14 @@ $( document ).ready(function() {
 		var input2 = $('<input type="button" value="CANCEL">');
 		input2.on("click", removeLockscreen);
 		var buttons = $("<div id='confirmButtons' />");
-		buttons.append("<label><input id='chkSplit' type='checkbox'" + ((v1 != v2) ? "checked" : "") + ">Macro mode (each line will be splitted in different entries)</label><br>");
+		buttons.append("<label><input id='chkSplit' type='checkbox'" + ((jsondata.macros[$(".sideselected").attr("data-index")].macroActions[v1].text.length == 0 || jsondata.macros[$(".sideselected").attr("data-index")].macroActions[v1].text[0] == '$') ? "checked" : "") + ">Macro mode (each line will be splitted in different entries)</label><br>");
+		//buttons.append("<label><input id='chkSplit' type='checkbox'" + ((v1 != v2) ? "checked" : "") + ">Macro mode (each line will be splitted in different entries)</label><br>");
 		buttons.append(input1);
 		buttons.append(input2);
 		buttons.append("<input type='text' class='hide' id='line1' value='" + v1 + "'><input type='text' class='hide' id='line2' value='" + v2 + "'>");
 
 
 		var box = $('<div id="box"/>');
-		box.css("margin", 'auto');
 		box.append(question);
 		box.append(buttons);
 		box.appendTo(screen);
@@ -620,7 +663,6 @@ $( document ).ready(function() {
 		}
 		$(".minikb .key").addClass("minikey");
 		$(".minikb .key").removeClass("key");
-		//$(".minikb .key").addClass("minikey").removeClass("key");
 		$(".minikb .key").text("");
 		for (i=0; i<keyboard_en.length; i++)
 			$(".minikey:eq("+i+")").text(keyboard_en[i]);
@@ -780,7 +822,6 @@ $( document ).ready(function() {
 		buttons.append(input2);
 
 		var box = $('<div id="box"/>');
-		box.css("margin", 'auto');
 		box.append(question);
 		box.append(buttons);
 		box.appendTo(screen);

@@ -100,6 +100,14 @@ src: url("digital-7.ttf");
 	z-index:						9;
 }
 
+.plus {
+	float:							right;
+	position:						relative;
+	top:							-1px;
+	width:							20px;
+	cursor:							pointer;
+}
+
 
 /* ******************** */
 /*	Forms				*/
@@ -156,11 +164,15 @@ table {
 	font-size:						16px;
 }
 
+#dmacro {
+	width:							60%;
+}
+
 #tmacro {
 	border-collapse:				collapse;
 	margin-top:						5%;
 	margin-left:					5%;
-	width:							60%;
+	width:							100%;
 }
 
 #tmacro tr {
@@ -168,13 +180,21 @@ table {
 	border-bottom:					1px solid #ccc;
 }
 
-#tmacro tr td:first-child {
+#tmacro tr td:nth-child(2) {
 	width:							25%;
 }
 
-#tmacro td {
+#tmacro tr td:nth-child(3) {
+	width:							60%;
+}
+
+#tmacro tr td:nth-child(4) {
+	width:							12%;
+	padding:						0px;
+}
+
+#tmacro td:not(:nth-child(1)):not(:nth-last-child(1)) {
 	padding:						10px 20px;
-	/*border:							1px solid #ccc;*/
 	line-height:					1.5em;
 }
 
@@ -182,10 +202,56 @@ table {
 	font-weight:					bold;
 }
 
-.editMacro {
+.editLine {
 	width:							24px;
+	float:							left;
+	cursor:							pointer;
 }
 
+.removeLine {
+	width:							26px;
+	float:							right;
+	cursor:							pointer;
+}
+
+.drag-handler {
+	text-align:						center;
+    width:							3%;
+    cursor:							move;
+    color:							#CCC;
+}
+
+.add-line {
+	margin-top:						0;
+	margin-left:					5%;
+	position:						relative;
+	z-index:						8;
+}
+
+.add-line_btn {
+	display:						block;
+	cursor:							pointer;
+	position:						absolute;
+	right:							0;
+	left:							0;
+	width:							15%;
+	margin:							0 auto;
+	-webkit-transition:				all .2s easy-in;
+	transition:						all .2s easy-in;
+	text-align:						center;
+	opacity:						0.5;
+	color:							#fff;
+	border:							1px solid #47f;
+	border-bottom-right-radius:		1em;
+	border-bottom-left-radius:		1em;
+	background:						#47f;
+	height:							1.5em;
+	line-height:					1.5em;
+}
+
+.add-line_btn:hover {
+	opacity:						1;
+}
 
 /* ******************** */
 /*	Scrollbars			*/
@@ -268,10 +334,17 @@ table {
 	box-sizing:						border-box;
 }
 
+.form label:hover {
+	background-color:				#47f;
+	opacity:						1;
+	color:							#FFF;
+}
+
 .form .layer input:checked + label {
 	border:							1px solid #333;
 	background-color:				#47f;
 	color:							#fff;
+	opacity:						0.75;
 }
 
 
@@ -371,6 +444,7 @@ table {
 	width:							24px;
 	margin:							24px 10px 0px 10px;
 	float:							right;
+	cursor:							pointer;
 }
 
 .keymapicons:hover {
@@ -405,6 +479,7 @@ table {
 .copy:hover,
 .paste:hover {
 	transform:						scale(1.5);
+	cursor:							pointer;
 }
 
 .clear {
@@ -496,24 +571,28 @@ table {
     top:							30%;
 	background-color:				#EEE;
 	padding:						20px;
+	margin:							auto;
+	border-radius:					2em;
 }
 
 #confirmText {
 	font-size:						20px;
+	margin:							1em;
 }
 #confirmButtons {
 	position:						absolute;
-	bottom:							20px;
-	left:							25%;
+	bottom:							6%;
+	left:							20%;
+	width:							100%;
 }
 
 #confirmButtons input {
-	margin-right:					20px
+	margin:							0 5%;
 }
 
 #lockscreen textarea {
 	width:							80%;
-	height:							70%;
+	height:							60%;
 	margin-left:					10%;
 }
 
