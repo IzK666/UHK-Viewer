@@ -20,6 +20,7 @@ $( document ).ready(function() {
 	$('#keymapRemove').click(keymapRemove);
 	$('#macroCopy').click(macroCopy);
 	$('#macroRemove').click(macroRemove);
+	$('.add-line_btn').click(macro_add_line);
 
 	$("input[type='radio'").change(changeLayer);
 
@@ -38,13 +39,8 @@ $( document ).ready(function() {
 		$(this).css("width", $(this).textWidth()+10);
 	});
 
-	$('#macName').change(macNewName);
+	$('#macName').change(macroRename);
 	$('#macName').on('input', function(){$(this).css("width", Math.ceil($(this).textWidth())+18)});
-
-	function showError(text) { // Unused
-		$("#txtError").html(text);
-		$("#divError").show().delay(1500).hide(0);
-	}
 
 	function menuselect() {
 		if ($(this).hasClass("sidetitle"))
@@ -93,6 +89,7 @@ $( document ).ready(function() {
 		$("#copyleftLayer").val("");
 		$("#copyrightKeymap").val("");
 		$("#copyrightLayer").val("");
+		updateTrashKeymap();
 	}
 
 	function changeKeymap(keymap) {
@@ -244,7 +241,6 @@ $( document ).ready(function() {
 		jsondata.keymaps.splice(index, 0, keymap);
 		loadKeymaps();
 		$('.sidenav a:nth-child('+(3+index+1)+')').addClass("glow");
-		updateTrashKeymap();
 	}
 
 	function getName(name) {
@@ -340,6 +336,16 @@ $( document ).ready(function() {
 									if (jsondata.keymaps[i].layers[j].modules[k].keyActions[l].keymapAbbreviation == old)
 										jsondata.keymaps[i].layers[j].modules[k].keyActions[l].keymapAbbreviation = name;
 
+			// Replace macro appeareances
+			var re1 = new RegExp("^(.*switchKeymap )" + escapeName(old) + "(.*)$");
+			var re2 = new RegExp("^(.*(toggleKeymapLayer|holdKeymapLayer|holdKeymapLayerMax|switchKeymapLayer) )" + escapeName(old) + "( (fn|base|mouse|mod).*)$");
+			for (i=0; i<jsondata.macros.length; i++)
+				for(j=0; j<jsondata.macros[i].macroActions.length; j++)
+					if (jsondata.macros[i].macroActions[j].macroActionType == "text")
+						if (jsondata.macros[i].macroActions[j].text.search(escapeName(old)) > 0)
+							if (jsondata.macros[i].macroActions[j].text[0] == "$")
+								jsondata.macros[i].macroActions[j].text = jsondata.macros[i].macroActions[j].text.replace(re1, "$1"+name+"$2").replace(re2, "$1 "+ name + " $3");
+
 			// Edit clipboard
 			if ($("#copyrightKeymap").val() != "")
 				if (jsondata.keymaps[$("#copyrightKeymap").val()].abbreviation == name)
@@ -382,9 +388,32 @@ $( document ).ready(function() {
 	function keymapRemove() {
 		if (jsondata.keymaps.length > 1) { // You can't remove last keymap
 			let keymapID = $(".sideselected").attr("data-index");
-			keymapRemoveConfirm(keymapID);
-		} else
-			removeLockscreen();
+			let keymapAbbr = jsondata.keymaps[keymapID].abbreviation;
+			//keymapRemoveConfirm(keymapID);
+			if (jsondata.keymaps[keymapID].isDefault==true)
+				jsondata.keymaps[(keymapID == 0) ? 1 : 0].isDefault = true;
+			jsondata.keymaps.splice(keymapID, 1);
+			loadKeymaps();
+			$('.sidenav a:nth-child('+4+')').trigger("click");
+
+			for (i=0; i<jsondata.keymaps.length; i++)
+				for (j=0; j< jsondata.keymaps[i].layers.length; j++)
+					for (k=0; k<jsondata.keymaps[i].layers[j].modules.length; k++)
+						for (l=0; l<jsondata.keymaps[i].layers[j].modules[k].keyActions.length; l++)
+							if (jsondata.keymaps[i].layers[j].modules[k].keyActions[l]) //can be null
+								if (jsondata.keymaps[i].layers[j].modules[k].keyActions[l].keyActionType == "switchKeymap")
+									if (jsondata.keymaps[i].layers[j].modules[k].keyActions[l].keymapAbbreviation == keymapAbbr)
+										jsondata.keymaps[i].layers[j].modules[k].keyActions[l]= null;
+
+			var re1 = new RegExp("^(.*switchKeymap " + escapeName(keymapAbbr) + ".*)$");
+			var re2 = new RegExp("^(.*(toggleKeymapLayer|holdKeymapLayer|holdKeymapLayerMax|switchKeymapLayer) " + escapeName(keymapAbbr) + " (fn|base|mouse|mod).*)$");
+			for (i=0; i<jsondata.macros.length; i++)
+				for(j=0; j<jsondata.macros[i].macroActions.length; j++)
+					if (jsondata.macros[i].macroActions[j].macroActionType == "text")
+						if (jsondata.macros[i].macroActions[j].text.search(escapeName(keymapAbbr)) > 0)
+							if (jsondata.macros[i].macroActions[j].text[0] == "$")
+								jsondata.macros[i].macroActions[j].text = jsondata.macros[i].macroActions[j].text.replace(re1, "# $1").replace(re2, "# $1");
+		}
 	}
 
 	function keymapRemoveConfirm(id) {
@@ -416,7 +445,6 @@ $( document ).ready(function() {
 		jsondata.keymaps.splice(id, 1);
 		loadKeymaps();
 		$('.sidenav a:nth-child('+4+')').trigger("click");
-		updateTrashKeymap();
 		removeLockscreen();
 	}
 
@@ -482,7 +510,6 @@ $( document ).ready(function() {
 	}
 
 	function clearLayer(keymap, layer, side) {
-		console.log("Clear layer from: "+ jsondata.keymaps[keymap].name + ", layer: " + layer + ", side: "+side);
 		for (i=0; i<36; i++) {
 			if (side != 1)
 				jsondata.keymaps[keymap].layers[layer].modules[0].keyActions[i] = null;
@@ -552,7 +579,7 @@ $( document ).ready(function() {
 		}
 
 		setEditRemoveActions();
-		
+
 		Sortable.create(
 			$('#tmacroBody')[0], {
 				animation: 150,
@@ -564,14 +591,12 @@ $( document ).ready(function() {
 				}
 			}
 		);
+	}
 
-		$('.add-line_btn').off('click');
-		$('.add-line_btn').click(function(e) {
-			$('#tmacroBody').append("<tr><td class='drag-handler'>&#9776;</td><td>Write text</td><td class='macroCommand'></td><td><img class='editLine' src='edit.png'><img class='removeLine' src='removeBlack.png'></td></tr>");
-			jsondata.macros[$('.sideselected').attr("data-index")].macroActions.splice(jsondata.macros[$('.sideselected').attr("data-index")].macroActions.length, 0, {macroActionType: "text", text: ""});
-			setEditRemoveActions();
-		});
-
+	function macro_add_line () {
+		$('#tmacroBody').append("<tr><td class='drag-handler'>&#9776;</td><td>Write text</td><td class='macroCommand'></td><td><img class='editLine' src='edit.png'><img class='removeLine' src='removeBlack.png'></td></tr>");
+		jsondata.macros[$('.sideselected').attr("data-index")].macroActions.splice(jsondata.macros[$('.sideselected').attr("data-index")].macroActions.length, 0, {macroActionType: "text", text: ""});
+		setEditRemoveActions();
 	}
 
 	function setEditRemoveActions () {
@@ -626,7 +651,6 @@ $( document ).ready(function() {
 				else
 					break;
 			}
-			console.log("END");
 			v1++;
 			v2--;
 		}
@@ -693,7 +717,7 @@ $( document ).ready(function() {
 	/************************************/
 
 	function newMacro() {
-		let a = getMName("New macro");
+		let a = getMacroName("New macro");
 		createMacro(a);
 		let macroID = 0;
 		while (jsondata.macros[macroID].name != a)
@@ -715,7 +739,7 @@ $( document ).ready(function() {
 		$('.sidenav a:nth-child('+(2+$('#mm').index()+index)+')').addClass("glow");
 	}
 
-	function getMName(name) {
+	function getMacroName(name) {
 		// Get a valid (not used) name
 		var newname = name.toUpperCase();
 		for (i=0; i<jsondata.macros.length; i++)
@@ -724,31 +748,31 @@ $( document ).ready(function() {
 				if (index > 0) {
 					var number = parseInt(name.slice(index+1, -1)) + 1;
 					name = name.slice(0, index) + "(" + number + ")";
-					return getMName(name);
+					return getMacroName(name);
 				} else {
-					return (getMName(name + " (2)"));
+					return (getMacroName(name + " (2)"));
 				}
 			}
 		return name;
 	}
 
-	function macNewName() {
+	function macroRename() {
 		// Place macro on the correct position (alphabetically).
 		// Sets correct width for name field
 
-		var old = jsondata.macros[$('.sideselected').attr("data-index")].name;
+		var oldName = jsondata.macros[$('.sideselected').attr("data-index")].name;
 		var newName = $('#macName').val();
-		if (old == $('#macName').val())
+		if (oldName == $('#macName').val())
 			return;
 
 		for (i=0; i<jsondata.macros.length; i++)
 			if (jsondata.macros[i].name == newName) {
-				$('#macName').val(old);
+				$('#macName').val(oldName);
 				return;
 			}
 
 		if ($('#macName').val().trim().length == 0)
-			$('#macName').val(old).css("width", Math.ceil($('#kmName').textWidth())+18);
+			$('#macName').val(oldName).css("width", Math.ceil($('#kmName').textWidth())+18);
 		else {
 			$('#macName').val(getName($('#macName').val())).css("width", Math.ceil($('#macName').textWidth())+18);
 
@@ -765,8 +789,8 @@ $( document ).ready(function() {
 			}
 			if (index > old)
 				index--;
-			console.log("OLD:"+old+" ,, NEW:"+index);
 
+			// Replace keymap appeareances
 			for (i=0; i<jsondata.keymaps.length; i++)
 				for (j=0; j< jsondata.keymaps[i].layers.length; j++)
 					for (k=0; k<jsondata.keymaps[i].layers[j].modules.length; k++)
@@ -780,7 +804,13 @@ $( document ).ready(function() {
 										jsondata.keymaps[i].layers[j].modules[k].keyActions[l].macroIndex = (value == old ? index : value+1);
 								}
 
-
+			// Replace macro appeareances
+			var re = new RegExp("^(.*(exec|call) " + escapeName(oldName) + ".*)$");
+			for (i=0; i<jsondata.macros.length; i++)
+				for(j=0; j<jsondata.macros[i].macroActions.length; j++)
+					if (jsondata.macros[i].macroActions[j].macroActionType == "text")
+						if (jsondata.macros[i].macroActions[j].text.search(escapeName(oldName)) > 0)
+							jsondata.macros[i].macroActions[j].text = jsondata.macros[i].macroActions[j].text.replace(re, "$1"+newName);
 
 			loadMacros();
 			$('.sidenav a:nth-child('+($('#mm').index()+index+2)+')').addClass("sideselected");
@@ -789,7 +819,7 @@ $( document ).ready(function() {
 
 	function macroCopy() {
 		let macroSourceID=$(".sideselected").attr("data-index");
-		macroName = getMName(jsondata.macros[macroSourceID].name);
+		macroName = getMacroName(jsondata.macros[macroSourceID].name);
 		createMacro(macroName);
 
 		// Search new keymap
@@ -805,7 +835,37 @@ $( document ).ready(function() {
 
 	function macroRemove() {
 		let macroID = $(".sideselected").attr("data-index");
-		macroRemoveConfirm(macroID);
+		let macroName = jsondata.macros[macroID].name;
+		//macroRemoveConfirm(macroID);
+		let id = $(".sideselected").attr("data-index");
+		jsondata.macros.splice(id, 1);
+		loadMacros();
+		if (jsondata.macros.length > 0)
+			$('#mm').next().trigger("click");
+		else
+			$(".element").addClass("hide");
+
+			// Remove keymap appeareances
+			for (i=0; i<jsondata.keymaps.length; i++)
+				for (j=0; j< jsondata.keymaps[i].layers.length; j++)
+					for (k=0; k<jsondata.keymaps[i].layers[j].modules.length; k++)
+						for (l=0; l<jsondata.keymaps[i].layers[j].modules[k].keyActions.length; l++)
+							if (jsondata.keymaps[i].layers[j].modules[k].keyActions[l]) //can be null
+								if (jsondata.keymaps[i].layers[j].modules[k].keyActions[l].keyActionType == "playMacro") {
+									let value = jsondata.keymaps[i].layers[j].modules[k].keyActions[l].macroIndex;
+									if (value > macroID)
+										jsondata.keymaps[i].layers[j].modules[k].keyActions[l].macroIndex = value-1;
+									else if (value == macroID)
+										jsondata.keymaps[i].layers[j].modules[k].keyActions[l] = null;
+								}
+
+			// Replace macro appeareances
+			var re = new RegExp("^(.*(exec|call) " + escapeName(macroName) + ".*)$");
+			for (i=0; i<jsondata.macros.length; i++)
+				for(j=0; j<jsondata.macros[i].macroActions.length; j++)
+					if (jsondata.macros[i].macroActions[j].macroActionType == "text")
+						if (jsondata.macros[i].macroActions[j].text.search(escapeName(macroName)) > 0)
+							jsondata.macros[i].macroActions[j].text = jsondata.macros[i].macroActions[j].text.replace(re, "# $1");
 	}
 
 	function macroRemoveConfirm(id) {
@@ -906,9 +966,9 @@ $( document ).ready(function() {
 	function updateTrashKeymap() {
 		// Hides the trash icon when there is only 1 keymap left (you can't remove the last one)
 		if (jsondata.keymaps.length > 1)
-			$('#keymapRemove').show();
+			$('#keymapRemove').removeClass("disabled").click(keymapRemove);
 		else
-			$('#keymapRemove').hide();
+			$('#keymapRemove').addClass("disabled").off('click');
 	}
 
 	function removeLockscreen() {
@@ -953,4 +1013,24 @@ $( document ).ready(function() {
 		if (letter.match(/[0-9]/)) return 2;
 		return 1;
 	}
+
+	function escapeName(name) {
+		return  name.replace(/\\/g, "\\\\")
+					.replace(/\[/g, "\\\[")
+					.replace(/\]/g, "\\\]")
+					.replace(/\{/g, "\\\{")
+					.replace(/\}/g, "\\\}")
+					.replace(/\(/g, "\\\(")
+					.replace(/\)/g, "\\\)")
+					.replace(/\+/g, "\\\+")
+					.replace(/\-/g, "\\\-")
+					.replace(/\!/g, "\\\!")
+					.replace(/\?/g, "\\\?")
+					.replace(/\*/g, "\\\*")
+					.replace(/\'/g, "\\\'")
+					.replace(/\"/g, '\\\"')
+					.replace(/\//g, "\\\/")
+					.replace(/\^/g, "\\\^");
+	}
+
 });

@@ -9,12 +9,17 @@ You can use it online [here](https://izk666.github.io/UHK-Viewer/), or dowload a
 
 - Create new blank keymaps
 - Clone and delete existing keymaps (last keymap can't be removed)
-- Copy/Paste/Clear layers (Left side and right side separately)
+- Copy/Paste/Clear layers (Left side and right side separately). Modules only copy/paste.
 - Rename keymaps (name and abbreviation)
+- Create new macros
+- Edit macros (Only write text)
+- Clone and delete macros
+- Rename macros
 
 ## Extras
 
 - Colored macros for [Karel's firmware](https://github.com/kareltucek)
+- Removing macros or keymamps modifies the calls from macros (commenting lines)
 
 ## Notes
 
@@ -28,6 +33,11 @@ You can use it online [here](https://izk666.github.io/UHK-Viewer/), or dowload a
 - Renamed keymaps and macros should modify the keys that call those functions
 
 ## Changelog
+
+### v2.26
+- Changed: Removed confirmation for keymap and macro deletion.
+- UI: Trash button for keymap no longer disappear when you can't use it (still disabled)
+- Fixed: Keymap and macro removal updates all calls from keys and macros correctly
 
 ### v2.25
 - Added: Create, clone, remove and rename macros
