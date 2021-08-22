@@ -18,8 +18,8 @@ You can use it online [here](https://izk666.github.io/UHK-Viewer/), or dowload a
 
 ## Extras
 
-- Colored macros for [Karel's firmware](https://github.com/kareltucek)
-- Removing macros or keymamps modifies the calls from macros (commenting lines)
+- Colored macros for [Karel's firmware](https://github.com/kareltucek). Only in view mode.
+- Removing or changing names of macros or keymamps modifies the calls from macros (commenting lines if they are removed)
 
 ## Notes
 
@@ -28,11 +28,14 @@ You can use it online [here](https://izk666.github.io/UHK-Viewer/), or dowload a
 - Modules don't get cleared.
 
 ## To do
-- Edit macros (working)
+- Edit macros (Text highlight for edit)
 - Show modules
-- Renamed keymaps and macros should modify the keys that call those functions
 
 ## Changelog
+
+### v2.27
+- Macro Editor: Show a small keyboard in the macro editor, specially useful for people who don't use the american layout. Abbreviation key names are copied to clipboard when the key is clicked (only those alternate names that appears).
+- Fixed: Color macro syntax
 
 ### v2.26
 - Changed: Removed confirmation for keymap and macro deletion.
