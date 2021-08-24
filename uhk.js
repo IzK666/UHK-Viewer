@@ -670,6 +670,7 @@ $( document ).ready(function() {
 		let comment = "#922";
 		let macro = "#f90";
 		let keymap = "#f90";
+		let deprecated = "#f00";
 
 
 		if (text[0] == "#" || (text[0] == "/" &&text[1] == "/")) {
@@ -680,16 +681,18 @@ $( document ).ready(function() {
 
 		let macros = new Array();
 		let keymaps = new Array();
-		for (i=0;i<jsondata.macros.length;i++)
-			macros.push(escapeName(jsondata.macros[i].name));
-		for (i=0;i<jsondata.keymaps.length;i++)
-			keymaps.push(escapeName(jsondata.keymaps[i].abbreviation));
+		for (j=0;j<jsondata.macros.length;j++)
+			macros.push(escapeName(jsondata.macros[j].name));
+		for (j=0;j<jsondata.keymaps.length;j++)
+			keymaps.push(escapeName(jsondata.keymaps[j].abbreviation));
 		return text.replace(/([#%@][\d\-]+)/, '<span style="color:' + slot + ';">$1</span>')
 			.replace(new RegExp('((^\\$)?\\b(' + KarelCond.join('|') + ')\\b)', 'g'), '<span style="color:' + conditional +';">$1</span>')
 			.replace(new RegExp('((^\\$)?\\b(' + Karel.join('|') + ')\\b)', 'g'), '<span style="color:' + command +';">$1</span>')
 			.replace(new RegExp('((^\\$)?\\b(' + KarelMod.join('|') + ')\\b)', 'g'), '<span style="color:' + modifiers + ';">$1</span>')
+			.replace(new RegExp('((^\\$)?\\b(' + KarelDeprecated.join('|') + ')\\b)', 'g'), '<span style="color:#FFF;background:' + deprecated + '">$1</span>')
 			.replace(new RegExp('((exec|call)</span> )(' + macros.join('|') + ')', 'g'), '$1<span style="color:' + macro + ';">$3</span>')
-			.replace(new RegExp('((switchKeymap|toggleKeymapLayer|holdKeymapLayer|holdKeymapLayerMax|switchKeymapLayer)</span> )(' + keymaps.join('|') + ')', 'g'), '$1<span style="color:' + keymap + ';">$3</span>');
+			.replace(new RegExp('((switchKeymap|toggleKeymapLayer|holdKeymapLayer|holdKeymapLayerMax|switchKeymapLayer)</span> )(' + keymaps.join('|') + ')', 'g'), '$1<span style="color:' + keymap + ';">$3</span>')
+			.replace(/^(\$set) (module\.(trackball|touchpad|trackpoint|keycluster)\.(navigationMode|baseSpeed|speed|acceleration|caretSpeedDivisor|scrollSpeedDivisor|axisLockStrength|axisLockStrengthFirstTick|scrollAxisLock|cursorAxisLock|invertAxis)|mouseKeys\.(move|scroll)\.(initialSpeed|baseSpeed|initialAcceleration|deceleratedSpeed|acceleratedSpeed|axisSkew)|compensateDiagonalSpeed|chording|stickyMods|debounceDelay|keystrokeDelay|setEmergencyKey)/, '<span style="color:' + command +';">$1</span> <span style="color:' + modifiers +';">$2</span>');
 	}
 
 	function keyHover() { // event minikb hover. Show normal and shift keys
