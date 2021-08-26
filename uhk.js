@@ -565,7 +565,7 @@ $( document ).ready(function() {
 					value = value.slice(0, -3);
 				$('#tmacro').append("<tr><td class='drag-handler'>&#9776;</td><td>" + capitalize(jsondata.macros[macro].macroActions[i].action) + " button</td><td class='macroCommand'>" + value + "</td><td><img class='removeLine' src='removeBlack.png'></td></tr>");
 			} else
-				$('#tmacro').append("<tr><td class='drag-handler'>&#9776;</td><td colspan='2'>" + jsondata.macros[macro].macroActions[i].macroActionType + "</td><td><img class='removeLine' src='removeBlack.png'></td></tr>");
+				$('#tmacro').append("<tr><td class='drag-handler'>&#9776;</td><!--td style='display:none'--></td><td colspan='2' class='unknownCommand'>Unknown type: " + jsondata.macros[macro].macroActions[i].macroActionType + "</td><td><img class='removeLine' src='removeBlack.png'></td></tr>");
 		}
 
 		addEditRemoveActions();
@@ -666,8 +666,8 @@ $( document ).ready(function() {
 		let command="#00F";
 		let conditional = "#90F";
 		let slot = "red";
-		let modifiers = "#093";
-		let comment = "#922";
+		let modifiers = "#922";
+		let comment = "#093";
 		let macro = "#f90";
 		let keymap = "#f90";
 		let deprecated = "#f00";
@@ -905,7 +905,14 @@ $( document ).ready(function() {
 		const input = event.target;
 		if ('files' in input && input.files.length > 0) {
 			getFileConfig(input.files[0]);
+			$('#loaded').text("File loaded: " + input.files[0].name);
 		}
+		/*if ($('a.sidetitle').first().next().next().text() == "Keymaps") {
+			$("#sideMenu a").off();
+			$('a.sidetitle').first().next().after("<a href=\"#\" data-menu=\"divImport\">Merge configuration</a>");
+			$("#sideMenu a").click(menuselect);
+			$("#tConfig td:nth-child(2)").css("opacity", "1");
+		}*/
 		$('#addKeymap').show();
 		$('#addMacro').show();
 	}

@@ -119,6 +119,46 @@ input[type="text"] {
 
 
 /* ******************** */
+/*	Configuration table*/
+/* ******************** */
+
+
+#cfgUp {
+	opacity:						0;
+	position:						absolute;
+	z-index:						-1;
+}
+
+.button {
+	cursor:							pointer;
+	background-color:				#eee;
+	color:							#333;
+	padding:						10px 20px;
+	border:							2px solid #333;
+	border-radius:					5px;
+}
+
+label.button {
+	padding:						10 50px;
+}
+
+#tConfig {
+	width:							60%;
+	margin-left:					5%;
+	text-align:						center;
+	margin-top:						5%;
+}
+
+#tConfig td:nth-child(2) {
+	opacity:						0;
+}
+
+#loaded {
+	font-size:						18px;
+	padding:						10px;
+}
+
+/* ******************** */
 /*	Layer selector		*/
 /* ******************** */
 
@@ -448,14 +488,15 @@ table {
 }
 
 #tmacro tr td:nth-child(2) {
-	width:							25%;
+	min-width:						25%;
+	max-width:						85%;
 }
 
 #tmacro tr td:nth-child(3) {
-	width:							60%;
+	width:						60%;
 }
 
-#tmacro tr td:nth-child(4) {
+#tmacro tr td:nth-last-child(1) {
 	width:							12%;
 	padding:						0px;
 }
@@ -467,6 +508,10 @@ table {
 
 .macroCommand {
 	font-weight:					bold;
+}
+
+.unknownCommand {
+	color:							#999;
 }
 
 .editLine {

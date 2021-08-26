@@ -17,16 +17,21 @@
 		</div>
 
 		<div id="divConfig" class="element">
-			<h1>Import configuration</h1>
-			<input type="file" id="cfgUp" accept=".json">
-			<br>
-			<br>
-			<br>
-			<br>
-			<br>
-			<br>
-			<h1>Export configuration</h1>
-			<input type="button" id="cfgDown" value="Download..." disabled>
+			<table id="tConfig">
+				<tr>
+					<td><h1>Load configuration</h1></td>
+					<td><h1>Save configuration</h1></td>
+				</tr>
+				<tr>
+					<td><label for="cfgUp" class="button">Upload</label><input type="file" id="cfgUp" accept=".json"></td>
+					<td><input type="button" id="cfgDown" class="button" value="Download" disabled></td>
+				</tr>
+				<tr>
+					<td id="loaded"></td>
+				</tr>
+			</table>
+			
+
 		</div>
 
 		<div id="divKeymap" class="hide element">
