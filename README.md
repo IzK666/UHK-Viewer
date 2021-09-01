@@ -17,6 +17,8 @@ You can use it online [here](https://izk666.github.io/UHK-Viewer/), or dowload a
 - Clone and delete macros
 - Rename macros
 
+- Import keymaps and macros from other configuration files (merge).
+
 ## Extras
 
 - Colored macros for [Karel's firmware](https://github.com/kareltucek). Only in view mode.
@@ -27,3 +29,5 @@ You can use it online [here](https://izk666.github.io/UHK-Viewer/), or dowload a
 - Individual keys can't be assigned. Only view mode
 - When a side is copied, modules are copied too (key cluster for left side and trackball/touchpad/trackpoint for right side), although not shown
 - Modules don't get cleared.
+- Files to merge must have the same format (compatibility with modules)
+- Macros and keymaps from imported files will point to keymaps and macros imported. Not the existing ones.

@@ -19,8 +19,8 @@
 		<div id="divConfig" class="element">
 			<table id="tConfig">
 				<tr>
-					<td><h1>Load configuration</h1></td>
-					<td><h1>Save configuration</h1></td>
+					<td><h2>Load configuration</h2></td>
+					<td><h2>Save configuration</h2></td>
 				</tr>
 				<tr>
 					<td><label for="cfgUp" class="button">Upload</label><input type="file" id="cfgUp" accept=".json"></td>
@@ -30,8 +30,32 @@
 					<td id="loaded"></td>
 				</tr>
 			</table>
+		</div>
 			
+		<div id="divMerge" class="hide element">
+			<h1></h1>
+			<h2>Merge configuration</h2>
 
+			<div>
+				<label for="mergeFile" class="button">Select file to merge</label><input type="file" id="mergeFile" accept=".json"><br><br><span id="mergedFile"></span>
+			</div>
+
+			<div id="divMergeContent" class="hide">
+				<div id="divMergeKeymaps" class="iconleft">
+					<input id='mergeKeymap' class="checkbox" type='checkbox' checked=true><label for='mergeKeymap'>Import keymaps</label>
+				</div>
+
+				<div id="divMergeMacros" class="iconright">
+					<input id='mergeMacro' class="checkbox" type='checkbox' checked=true><label for='mergeMacro'>Import macros</label>
+				</div>
+			</div>
+			<div id="divPrefix" class="hide">
+				Prefix:
+				<input type="text" id="mergePrefix" placeholder="Set a prefix for imported keymaps/macros (optional)">
+			</div>
+			<div class="hide">
+				<input id="mergeRun" type="button" value="Merge" class="button">
+			</div>
 		</div>
 
 		<div id="divKeymap" class="hide element">

@@ -1,5 +1,9 @@
 ## Changelog
 
+### v.2.50
+- Added: Option to merge other configuration files
+- Fixed: Sometimes new keymaps are sorted incorrectly
+
 ### v2.29
 - UI: New import/export page
 - Fixed: View macro had UI issues with unknown commands
