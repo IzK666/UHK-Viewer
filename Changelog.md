@@ -1,6 +1,9 @@
 ## Changelog
 
-### v.2.50
+### v2.51
+- Fixed: Macro names. Name conflicts wouldn't have any whitespace, to keep compatibility with Karel's macros. When renaming macros manually and the whitespace is used, maro calls (exec or play) are commmented.
+
+### v2.50
 - Added: Option to merge other configuration files
 - Fixed: Sometimes new keymaps are sorted incorrectly
 

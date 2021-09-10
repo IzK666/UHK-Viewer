@@ -780,7 +780,7 @@ $( document ).ready(function() {
 					name = name.slice(0, index) + "(" + number + ")";
 					return getMacroName(name);
 				} else {
-					return (getMacroName(name + " (2)"));
+					return (getMacroName(name + "(2)"));
 				}
 			}
 		return name;
@@ -836,10 +836,20 @@ $( document ).ready(function() {
 
 			// Replace macro appeareances
 			let re = new RegExp("^(\\$.*(exec|call) )" + escapeName(oldName) + "(.*)$");
+			let re2 = new RegExp("^\\#(\\$.*(exec|call) )" + escapeName(oldName) + "(.*)$");
 			for (let i=0; i<jsondata.macros.length; i++)
 				for(j=0; j<jsondata.macros[i].macroActions.length; j++)
 					if (jsondata.macros[i].macroActions[j].macroActionType == "text")
-						jsondata.macros[i].macroActions[j].text = jsondata.macros[i].macroActions[j].text.replace(re, "$1"+newName+"$3");
+						if (oldName.search(" ")<0)
+							if (newName.search(" ")<0)
+								jsondata.macros[i].macroActions[j].text = jsondata.macros[i].macroActions[j].text.replace(re, "$1"+newName+"$3");
+							else
+								jsondata.macros[i].macroActions[j].text = jsondata.macros[i].macroActions[j].text.replace(re, "#$1"+newName+"$3");
+						else
+							if (newName.search(" ")<0)
+								jsondata.macros[i].macroActions[j].text = jsondata.macros[i].macroActions[j].text.replace(re2, "$1"+newName+"$3");
+							else
+								jsondata.macros[i].macroActions[j].text = jsondata.macros[i].macroActions[j].text.replace(re2, "#$1"+newName+"$3");
 
 			loadMacros();
 			$('.sidenav a:nth-child('+(1+$('#mm').index()+index+1)+')').addClass("sideselected");
@@ -1074,7 +1084,7 @@ $( document ).ready(function() {
 		// Replace macro appearances in keymaps and macros (only imported ones)
 		let re1K = new RegExp("^(\\$.*switchKeymap )(" + keymapArr.map(e => escapeName(e[1])).join("|") + ")(.*)$");
 		let re2K = new RegExp("^(\\$.*(toggleKeymapLayer|holdKeymapLayer|holdKeymapLayerMax|switchKeymapLayer) )(" + keymapArr.map(e => escapeName(e[1])).join("|") + ")(.*)$");
-		let reM = new RegExp("^(\\$.*(exec|call) )(" + macroArr.map(e => escapeName(e[2])).join("|") + ")(.*)$");
+		let reM = new RegExp("^(\\#?\\$.*(exec|call) )(" + macroArr.map(e => escapeName(e[2])).join("|") + ")(.*)$");
 
 		for (let i=0; i<jsondata.keymaps.length; i++)
 			if (array_find(keymapArr, 2, jsondata.keymaps[i].abbreviation)) // Check if keymap is imported
