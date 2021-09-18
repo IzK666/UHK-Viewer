@@ -1,14 +1,13 @@
 
 $.fn.textWidth = function(text, font) {
 	if (!$.fn.textWidth.fakeEl) $.fn.textWidth.fakeEl = $('<span>').hide().appendTo(document.body);
-	$.fn.textWidth.fakeEl.text(text || this.val() || this.text()).css('font', font || this.css('font'));
+	$.fn.textWidth.fakeEl.text(text || this.val() || this.text()).css('font', font || this.css('font')).css('font-size', this.css('font-size')).css('font-weight', this.css('font-weight'));
 	return $.fn.textWidth.fakeEl.width();
 };
 
 var jsondata;
 var jsonhash;
 var mergedata;
-var modules; // Enables/disables modules
 
 $( document ).ready(function() {
 	$("#sideMenu a").click(menuselect);
@@ -244,23 +243,18 @@ $( document ).ready(function() {
 
 	function createKeymap(aname, abbr, glow=true) {
 		// Create a new blank keymap
-		let layer;
-		if (modules)
-			layer = [{modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}, {id: 4, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}, {id: 4, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}, {id: 4, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}, {id: 4, keyActions: []}]}];
-		else
-			layer = [{modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}]}];
+		let layer = [{modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}, {id: 4, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}, {id: 4, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}, {id: 4, keyActions: []}]}, {modules: [{id: 0, keyActions: []}, {id: 1, keyActions: []}, {id: 2, keyActions: []}, {id: 4, keyActions: []}]}];
 		for (let i=0; i<layer.length; i++)
 			for (let j=0; j<2; j++)
 				for (let k=0; k<35; k++)
 					layer[i].modules[j].keyActions.push(null);
-		if (modules)
-			for (let i=0; i<layer.length; i++) {
-				for (let k=0; k<6; k++)
-						layer[i].modules[2].keyActions.push(null);
-				for (let k=0; k<2; k++)
-						layer[i].modules[3].keyActions.push(null);
-			}
-		let keymap = {isDefault: false, abbreviation: abbr, name: aname, description: "", layers: layer};
+		for (let i=0; i<layer.length; i++) {
+			for (let k=0; k<6; k++)
+					layer[i].modules[2].keyActions.push(null);
+			for (let k=0; k<2; k++)
+					layer[i].modules[3].keyActions.push(null);
+		}
+		let keymap = {isDefault: false, abbreviation: abbr, name: aname, description: "Blank keymap created with UHK Tools", layers: layer};
 		let index = 0;
 
 		// Search position for the new keymap
@@ -496,19 +490,20 @@ $( document ).ready(function() {
 		if (side != 1) {
 			jsondata.keymaps[destKeymap].layers[destLayer].modules[0].id = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[0].id;
 			jsondata.keymaps[destKeymap].layers[destLayer].modules[0].keyActions = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[0].keyActions.slice();
-			if (modules) {
-				jsondata.keymaps[destKeymap].layers[destLayer].modules[3].id = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[3].id;
-				jsondata.keymaps[destKeymap].layers[destLayer].modules[3].keyActions = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[3].keyActions.slice();
+			if (jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[3]) {
+				if (jsondata.keymaps[destKeymap].layers[destLayer].modules[3]) {
+					jsondata.keymaps[destKeymap].layers[destLayer].modules[3].id = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[3].id;
+					jsondata.keymaps[destKeymap].layers[destLayer].modules[3].keyActions = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[3].keyActions.slice();
+				} else {
+					jsondata.keymaps[destKeymap].layers[destLayer].modules.push(jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[3]);
+				}
 			}
 		}
 		if (side != 0) {
 			jsondata.keymaps[destKeymap].layers[destLayer].modules[1].id = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[1].id;
 			jsondata.keymaps[destKeymap].layers[destLayer].modules[1].keyActions = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[1].keyActions.slice();
-			if (modules) {
-				jsondata.keymaps[destKeymap].layers[destLayer].modules[2].id = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[2].id;
-				jsondata.keymaps[destKeymap].layers[destLayer].modules[2].keyActions = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[2].keyActions.slice();
-
-			}
+			jsondata.keymaps[destKeymap].layers[destLayer].modules[2].id = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[2].id;
+			jsondata.keymaps[destKeymap].layers[destLayer].modules[2].keyActions = jsondata.keymaps[sourceKeymap].layers[sourceLayer].modules[2].keyActions.slice();
 		}
 	}
 
@@ -697,9 +692,9 @@ $( document ).ready(function() {
 
 		let macros = new Array();
 		let keymaps = new Array();
-		for (let i=0; i<jsondata.macros.length; i++)
+		for (let i=jsondata.macros.length-1; i >=0; i--)
 			macros.push(escapeName(jsondata.macros[i].name));
-		for (let i=0; i<jsondata.keymaps.length; i++)
+		for (let i=jsondata.keymaps.length-1; i>=0; i--)
 			keymaps.push(escapeName(jsondata.keymaps[i].abbreviation));
 		return text.replace(/([#%@][\d\-]+)/, '<span style="color:' + slot + ';">$1</span>')
 			.replace(new RegExp('((^\\$)?\\b(' + KarelCond.join('|') + ')\\b)', 'g'), '<span style="color:' + conditional +';">$1</span>')
@@ -953,7 +948,6 @@ $( document ).ready(function() {
 			jsonhash =  crc32(content);
 			loadKeymaps();
 			loadMacros();
-			modules = (jsondata.keymaps[0].layers[0].modules.length == 4) ? true : false;
 		}).catch(error => console.log(error));
 	}
 
@@ -981,8 +975,6 @@ $( document ).ready(function() {
 			importFileConfig(input.files[0]);
 			$(this).val("");
 		}
-		//$('#addKeymap').show();
-		//$('#addMacro').show();
 	}
 
 	function importFileConfig(file) {
@@ -993,29 +985,23 @@ $( document ).ready(function() {
 				$("#divMerge div:not(:first)").hide();
 			} else {
 				mergedata = JSON.parse(content);
-				if ((mergedata.keymaps[0].layers[0].modules.length == 4) == modules) {
-					// Loading file
-					$('#mergedFile').text("File loaded: " + file.name);
-					$("#divMergeKeymaps br").remove();
-					$("#divMergeKeymaps input").slice(1).remove();
-					$("#divMergeKeymaps label").slice(1).remove();
-					$("#divMergeMacros br").remove();
-					$("#divMergeMacros input").slice(1).remove();
-					$("#divMergeMacros label").slice(1).remove();
-					$("#divMerge div").show();
-					$("#divMerge .checkbox").prop("checked", true);
-					$("#mergePrefix").val("");
+				// Loading file
+				$('#mergedFile').text("File loaded: " + file.name);
+				$("#divMergeKeymaps br").remove();
+				$("#divMergeKeymaps input").slice(1).remove();
+				$("#divMergeKeymaps label").slice(1).remove();
+				$("#divMergeMacros br").remove();
+				$("#divMergeMacros input").slice(1).remove();
+				$("#divMergeMacros label").slice(1).remove();
+				$("#divMerge div").show();
+				$("#divMerge .checkbox").prop("checked", true);
+				$("#mergePrefix").val("");
 
-					for (let i=0; i<mergedata.keymaps.length; i++) {
-						$("#divMergeKeymaps").append("<br><input id='mergeKeymap" + i + "' data-id='" + i + "' class='checkbox1' type='checkbox' checked=true><label for='mergeKeymap" + i + "'>" + mergedata.keymaps[i].name + "</label>");
-					}
-					for (let i=0; i<mergedata.macros.length; i++) {
-						$("#divMergeMacros").append("<br><input id='mergeMacro" + i + "' data-id='" + i + "' class='checkbox1' type='checkbox' checked=true><label for='mergeMacro" + i + "'>" + mergedata.macros[i].name + "</label>");
-					}
-				} else {
-					// ERROR. Don't load
-					$('#mergedFile').text("Error: The imported file is not compatible. It's a" + ((modules) ? "n older version without " : " newer version with ") + "modules compatibility" );
-					$("#divMerge div:not(:first)").hide();
+				for (let i=0; i<mergedata.keymaps.length; i++) {
+					$("#divMergeKeymaps").append("<br><input id='mergeKeymap" + i + "' data-id='" + i + "' class='checkbox1' type='checkbox' checked=true><label for='mergeKeymap" + i + "'>" + mergedata.keymaps[i].name + "</label>");
+				}
+				for (let i=0; i<mergedata.macros.length; i++) {
+					$("#divMergeMacros").append("<br><input id='mergeMacro" + i + "' data-id='" + i + "' class='checkbox1' type='checkbox' checked=true><label for='mergeMacro" + i + "'>" + mergedata.macros[i].name + "</label>");
 				}
 			}
 		}).catch(error => console.log(error));

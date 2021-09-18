@@ -1,4 +1,4 @@
-# UHK Layer editor
+# UHK Tools
 
 A tool for copying/cloning/erasing layers for [UHK](https://github.com/UltimateHackingKeyboard/agent).
 
@@ -13,7 +13,7 @@ You can use it online [here](https://izk666.github.io/UHK-Viewer/), or dowload a
 - Rename keymaps (name and abbreviation)
 
 - Create new macros
-- Edit macros (Only write text)
+- Edit macros (Only 'Write text')
 - Clone and delete macros
 - Rename macros
 
@@ -30,4 +30,4 @@ You can use it online [here](https://izk666.github.io/UHK-Viewer/), or dowload a
 - When a side is copied, modules are copied too (key cluster for left side and trackball/touchpad/trackpoint for right side), although not shown
 - Modules don't get cleared.
 - Files to merge must have the same format (compatibility with modules)
-- Macros and keymaps from imported files will point to keymaps and macros imported. Not the existing ones.
+- Macros and keymaps from imported files will point only to imported keymaps and macros. Not the existing ones, even if they have the same name.

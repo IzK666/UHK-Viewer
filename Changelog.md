@@ -1,5 +1,9 @@
 ## Changelog
 
+### v2.52
+- Fixed: Bad syntax color for macros and keymaps names.
+- Fixed: Supported both configuration files: with and without module support (new and old types)
+
 ### v2.51
 - Fixed: Macro names. Name conflicts wouldn't have any whitespace, to keep compatibility with Karel's macros. When renaming macros manually and the whitespace is used, maro calls (exec or play) are commmented.
 
