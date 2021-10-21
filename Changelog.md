@@ -1,5 +1,8 @@
 ## Changelog
 
+### v2.53
+- Fixed: When a new macro was created, keymaps weren't updated and pointed to the wrong macros
+
 ### v2.52
 - Fixed: Bad syntax color for macros and keymaps names.
 - Fixed: Supported both configuration files: with and without module support (new and old types)

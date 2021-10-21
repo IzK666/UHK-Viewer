@@ -747,6 +747,19 @@ $( document ).ready(function() {
 		while (jsondata.macros[macroID].name != a)
 			macroID++;
 		$('.sidenav a:nth-child('+(1+$('#mm').index()+macroID+1)+')').trigger('click');
+
+		// Replace keymap appeareances
+		for (let i=0; i<jsondata.keymaps.length; i++)
+			for (let j=0; j< jsondata.keymaps[i].layers.length; j++)
+				for (let k=0; k<jsondata.keymaps[i].layers[j].modules.length; k++)
+					for (let l=0; l<jsondata.keymaps[i].layers[j].modules[k].keyActions.length; l++)
+						if (jsondata.keymaps[i].layers[j].modules[k].keyActions[l]) //can be null
+							if (jsondata.keymaps[i].layers[j].modules[k].keyActions[l].keyActionType == "playMacro") {
+								let value = jsondata.keymaps[i].layers[j].modules[k].keyActions[l].macroIndex;
+								if (value >= macroID)
+									jsondata.keymaps[i].layers[j].modules[k].keyActions[l].macroIndex = value+1);
+							}
+
 	}
 
 	function createMacro(aname, glow=true) {
