@@ -757,7 +757,7 @@ $( document ).ready(function() {
 							if (jsondata.keymaps[i].layers[j].modules[k].keyActions[l].keyActionType == "playMacro") {
 								let value = jsondata.keymaps[i].layers[j].modules[k].keyActions[l].macroIndex;
 								if (value >= macroID)
-									jsondata.keymaps[i].layers[j].modules[k].keyActions[l].macroIndex = value+1);
+									jsondata.keymaps[i].layers[j].modules[k].keyActions[l].macroIndex = value+1;
 							}
 
 	}
