@@ -1,5 +1,8 @@
 ## Changelog
 
+### v2.54
+- Fixed: When a new macro was cloned, keymaps weren't updated and pointed to the wrong macros
+
 ### v2.53
 - Fixed: When a new macro was created, keymaps weren't updated and pointed to the wrong macros
 

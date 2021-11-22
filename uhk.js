@@ -759,7 +759,6 @@ $( document ).ready(function() {
 								if (value >= macroID)
 									jsondata.keymaps[i].layers[j].modules[k].keyActions[l].macroIndex = value+1;
 							}
-
 	}
 
 	function createMacro(aname, glow=true) {
@@ -876,6 +875,17 @@ $( document ).ready(function() {
 
 		// Copy macros
 		jsondata.macros[macroDestID].macroActions = jsondata.macros[macroSourceID].macroActions.slice();
+
+		for (let i=0; i<jsondata.keymaps.length; i++)
+			for (let j=0; j< jsondata.keymaps[i].layers.length; j++)
+				for (let k=0; k<jsondata.keymaps[i].layers[j].modules.length; k++)
+					for (let l=0; l<jsondata.keymaps[i].layers[j].modules[k].keyActions.length; l++)
+						if (jsondata.keymaps[i].layers[j].modules[k].keyActions[l]) //can be null
+							if (jsondata.keymaps[i].layers[j].modules[k].keyActions[l].keyActionType == "playMacro") {
+								let value = jsondata.keymaps[i].layers[j].modules[k].keyActions[l].macroIndex;
+								if (value >= macroDestID)
+									jsondata.keymaps[i].layers[j].modules[k].keyActions[l].macroIndex = value+1;
+							}
 
 		$('.sidenav a:nth-child('+(1+$('#mm').index()+macroDestID+1)+')').trigger('click');
 	}
