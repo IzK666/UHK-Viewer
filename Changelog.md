@@ -1,5 +1,8 @@
 ## Changelog
 
+### v2.55
+- New: Prevent load of incompatible files (version > 4)
+
 ### v2.54
 - Fixed: When a new macro was cloned, keymaps weren't updated and pointed to the wrong macros
 

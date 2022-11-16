@@ -938,7 +938,6 @@ $( document ).ready(function() {
 			let hiddenElement = document.createElement('a');
 			hiddenElement.href = 'data:attachment/text,' + encodeURIComponent(textToSave);
 			hiddenElement.target = '_blank';
-			//hiddenElement.download = 'userConfiguration-mod.json';
 			hiddenElement.download = $('#cfgDown').attr("data-file");
 			hiddenElement.click();
 		}
@@ -969,8 +968,16 @@ $( document ).ready(function() {
 			$("#cfgDown").prop('disabled', false);
 			jsondata = JSON.parse(content);
 			jsonhash =  crc32(content);
-			loadKeymaps();
-			loadMacros();
+
+			// Check if file is too new
+			$("#importIncompatibleFile").remove();
+			if (jsondata.userConfigMajorVersion > 4) {
+				$("#tConfig").append("<tr><td colspan=2 id='importIncompatibleFile' style='color:red;background-color:lightgrey;font-size:x-large'>Alert: This file is not compatible with this UHK-Viewer version!</td></tr>");
+			} else {
+				loadKeymaps();
+				loadMacros();
+			}
+
 		}).catch(error => console.log(error));
 	}
 
@@ -1008,23 +1015,31 @@ $( document ).ready(function() {
 				$("#divMerge div:not(:first)").hide();
 			} else {
 				mergedata = JSON.parse(content);
-				// Loading file
-				$('#mergedFile').text("File loaded: " + file.name);
-				$("#divMergeKeymaps br").remove();
-				$("#divMergeKeymaps input").slice(1).remove();
-				$("#divMergeKeymaps label").slice(1).remove();
-				$("#divMergeMacros br").remove();
-				$("#divMergeMacros input").slice(1).remove();
-				$("#divMergeMacros label").slice(1).remove();
-				$("#divMerge div").show();
-				$("#divMerge .checkbox").prop("checked", true);
-				$("#mergePrefix").val("");
 
-				for (let i=0; i<mergedata.keymaps.length; i++) {
-					$("#divMergeKeymaps").append("<br><input id='mergeKeymap" + i + "' data-id='" + i + "' class='checkbox1' type='checkbox' checked=true><label for='mergeKeymap" + i + "'>" + mergedata.keymaps[i].name + "</label>");
-				}
-				for (let i=0; i<mergedata.macros.length; i++) {
-					$("#divMergeMacros").append("<br><input id='mergeMacro" + i + "' data-id='" + i + "' class='checkbox1' type='checkbox' checked=true><label for='mergeMacro" + i + "'>" + mergedata.macros[i].name + "</label>");
+				// Check if file is too new
+				$("#mergeIncompatibleFile").remove();
+				if (jsondata.userConfigMajorVersion > 4) {
+					a=$("<div id='mergeIncompatibleFile' style='color:red;background-color:lightgrey;font-size:x-large'>ALERT: This file is not compatible with this UHK-Viewer version!</div>")
+					$("#divMergeContent").before(a);
+				} else {
+					// Loading file
+					$('#mergedFile').text("File loaded: " + file.name);
+					$("#divMergeKeymaps br").remove();
+					$("#divMergeKeymaps input").slice(1).remove();
+					$("#divMergeKeymaps label").slice(1).remove();
+					$("#divMergeMacros br").remove();
+					$("#divMergeMacros input").slice(1).remove();
+					$("#divMergeMacros label").slice(1).remove();
+					$("#divMerge div").show();
+					$("#divMerge .checkbox").prop("checked", true);
+					$("#mergePrefix").val("");
+	
+					for (let i=0; i<mergedata.keymaps.length; i++) {
+						$("#divMergeKeymaps").append("<br><input id='mergeKeymap" + i + "' data-id='" + i + "' class='checkbox1' type='checkbox' checked=true><label for='mergeKeymap" + i + "'>" + mergedata.keymaps[i].name + "</label>");
+					}
+					for (let i=0; i<mergedata.macros.length; i++) {
+						$("#divMergeMacros").append("<br><input id='mergeMacro" + i + "' data-id='" + i + "' class='checkbox1' type='checkbox' checked=true><label for='mergeMacro" + i + "'>" + mergedata.macros[i].name + "</label>");
+					}
 				}
 			}
 		}).catch(error => console.log(error));
