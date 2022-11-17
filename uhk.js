@@ -323,7 +323,7 @@ $( document ).ready(function() {
 			// Now, we have to sort the keymap into the correct position
 			old = parseInt($('.sideselected').attr("data-index"));
 			let index = 0
-			let capsname = $("#kmName").val();
+			let capsname = $("#kmName").val().toUpperCase();
 			while (index < jsondata.keymaps.length && jsondata.keymaps[index].name.toUpperCase() < capsname) {
 				index++;
 			}
